@@ -135,7 +135,7 @@ python -m uvicorn app.main_gateway:app --port 5020
 
 **访问口令**：环境变量 `QUNZHI_ACCESS_KEY`（仓库里不含真值）。
 
-**依赖**：Python 3.10+、FastAPI、Uvicorn、Pydantic、Requests。
+**依赖**：Python 3.10+（开发环境 3.12）、FastAPI、Uvicorn、Pydantic、Requests。
 可选：chromadb / jieba / sentence-transformers（语义检索，不装也能跑）。
 
 ---
