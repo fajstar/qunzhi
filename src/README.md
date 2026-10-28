@@ -11,7 +11,7 @@
 src/
 ├── app/                面向外部的服务层（52 个文件）
 │   ├── main_gateway.py      FastAPI 入口，所有 HTTP 路由在这
-│   ├── guard.py             访问口令 + IP 限流
+│   ├── guard.py             访问口令 + IP 限流 + 每日消费上限
 │   ├── input_intent.py      意图体检（判断课题够不够具体）
 │   │
 │   ├── rag/                 检索装置
@@ -120,7 +120,7 @@ cited_count         引用数
 | **干预指令长什么样** | `sandbox/prompts.py` 搜 `INTERVENTION_TEMPLATES` |
 | **检索怎么去重分级** | `app/source_plugins/` 任选一个，看 `search()` 的返回结构 |
 | **API 有哪些** | `app/main_gateway.py` 搜 `@app.post` |
-| **怎么防滥用** | `app/guard.py` |
+| **怎么防滥用** | `app/guard.py`（口令 / IP 限流 / **每日全局消费上限**）|
 
 ---
 
