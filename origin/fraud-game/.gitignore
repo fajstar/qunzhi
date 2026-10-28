@@ -1,0 +1,8 @@
+# 本地密钥配置（不要提交到版本库）
+config_local.json
+*.env
+.env
+
+# Python 缓存
+__pycache__/
+*.pyc

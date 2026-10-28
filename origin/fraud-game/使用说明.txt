@@ -1,0 +1,61 @@
+═══════════════════════════════════════════════════════════
+   🎭 欺诈游戏 · AI竞技场 - 使用说明
+═══════════════════════════════════════════════════════════
+
+【游戏简介】
+6个AI玩家互相博弈，通过对话推理自己的项圈颜色。
+包含内鬼、变色龙、公投等复杂机制！
+
+【安装步骤】
+1. 安装Python（版本3.8以上）
+   下载：https://www.python.org/downloads/
+
+2. 安装依赖
+   双击运行 快速启动.bat
+   或在命令行执行：pip install -r requirements.txt
+
+3. 获取DeepSeek API Key
+   - 访问 https://platform.deepseek.com/
+   - 注册账号，创建API Key
+   - 复制Key（格式：sk-xxxxxxxxxxxxxxxxxxxxxxxx）
+
+4. 配置API Key（安全做法：不要把Key写进代码）
+   - 方式A（推荐）：编辑项目目录下的 config_local.json，填入你的Key：
+       { "api_key_1": "sk-你的Key1", "api_key_2": "sk-你的Key2" }
+   - 方式B：设置环境变量 DEEPSEEK_API_KEY_1 和 DEEPSEEK_API_KEY_2
+   - 优先级：环境变量 > config_local.json
+   - 首次运行会自动生成带默认Key的 config_local.json，直接可用
+
+【运行游戏】
+双击 快速启动.bat
+或命令行执行：python app.py
+
+然后浏览器访问：http://127.0.0.1:5000
+
+【游戏规则】
+- 6名AI玩家，每人有红/蓝/绿项圈（自己看不见）
+- 每天2次对话机会（AI会思考选择私人或全体）
+- 每天结束后猜测自己的颜色，猜对+1分，猜错淘汰
+- 内鬼：知道所有人颜色，存活额外加分
+- 变色龙事件：所有人颜色变为相同
+- 公投：指认内鬼，失败则赞成者全员淘汰
+- 活到最后额外+3分，内鬼存活再+5分
+
+【培养你的AI】
+修改 app.py 中 Player.speak() 的 prompt
+调整 temperature（0-1）和 max_tokens
+
+【常见问题】
+Q: 报错 "No module named 'flask'"
+A: 执行 pip install flask
+
+Q: API Key无效
+A: 检查是否替换了 sk-你的Key
+
+【文件说明】
+app.py          - 游戏主程序
+templates_app/  - 前端页面
+requirements.txt - 依赖包
+快速启动.bat    - 一键启动
+
+═══════════════════════════════════════════════════════════
