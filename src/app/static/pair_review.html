@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>最小对照对 · 成对判别</title>
+<style>
+ body{font-family:system-ui,"Microsoft YaHei",sans-serif;margin:0;background:#f5f6f8;color:#1c1e21}
+ .wrap{max-width:940px;margin:0 auto;padding:22px}
+ h1{font-size:19px;margin:0 0 6px}
+ .sub{color:#65676b;font-size:13px;margin-bottom:14px;line-height:1.7}
+ .bar{height:7px;background:#e4e6eb;border-radius:4px;overflow:hidden;margin-bottom:16px}
+ .bar>i{display:block;height:100%;background:#1877f2;width:0}
+ .q{background:#f7f8fa;border-left:3px solid #1877f2;padding:11px 13px;border-radius:5px;
+    font-size:15px;line-height:1.7;margin-bottom:16px}
+ .opts{display:flex;gap:14px;align-items:stretch}
+ .opt{flex:1;background:#fff;border:2px solid #e4e6eb;border-radius:9px;padding:16px;
+      cursor:pointer;font-size:16px;line-height:1.8;min-height:110px}
+ .opt:hover{border-color:#1877f2;background:#fbfdff}
+ .opt .lab{font-size:12px;color:#8a8d91;margin-bottom:8px;font-weight:600}
+ .row{font-size:12px;color:#65676b;margin-bottom:10px}
+ .done{text-align:center;padding:26px 10px}
+ table{border-collapse:collapse;font-size:14px;margin:12px auto}
+ td,th{border:1px solid #e4e6eb;padding:6px 12px}
+ .note{font-size:12px;color:#8a8d91;margin-top:16px;line-height:1.7}
+ .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+ .hd input{padding:7px 10px;border:1px solid #ccd0d5;border-radius:6px;font-family:inherit}
+ button{padding:12px 18px;font-size:14px;border:1px solid #ccd0d5;background:#fff;border-radius:7px;
+        cursor:pointer;font-family:inherit;margin:4px}
+ button.y{border-color:#31a24c;color:#1b7a34}
+</style></head><body><div class="wrap">
+<div class="hd"><h1>最小对照对 · 成对判别（2AFC）</h1>
+ <input id="who" placeholder="你的名字" style="width:180px"></div>
+<div class="sub">每屏两条文本，<b>左右随机</b>。请选**更符合上方问题**的那一条。
+ 分不出来就凭第一感觉选——**猜中率是 50%**，所以"分不出来"本身就是要测的东西。
+ 快捷键 <b>←</b> 选左边 ｜ <b>→</b> 选右边 ｜ 选完自动进入下一对。</div>
+<div class="bar"><i id="pb"></i></div>
+<div id="main"></div>
+<div class="note">本页不告知哪一条是 P、也不含构造脚本与任何尺子读数。</div>
+</div>
+<script>
+const P = [{"pair_id": "T5-G5-1", "group": "G5_质疑", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "我觉得这个机制挺公平的。", "right": "我不同意完全由组内互评决定个人分，因为小圈子会互相抬分，边缘学生反而吃亏。", "answer": "right"}, {"pair_id": "T4-G1-2", "group": "G1_措辞", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "在基础教育阶段开AI课目，关键不在讲原理，而在让学生动手做个小东西。", "right": "人工智能课程该怎么开，中小学人工智能课程要开，课程开设是关键，所以要开课程。", "answer": "left"}, {"pair_id": "T5-G1-1", "group": "G1_措辞", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "如何设计公平高效的小组作业评分机制很重要，我们要设计公平高效的小组作业评分机制。", "right": "团队任务的成绩评定制度要公正，先让每个人写清楚自己做了什么，再分配权重。", "answer": "right"}, {"pair_id": "T2-G3-2", "group": "G3_深度", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "各方面都要兼顾，既要考虑这个，也要考虑那个，综合起来看。", "right": "禁令失效的机制在于检测手段本身不可靠，误判会先伤到无辜者，进而让规则整体失去威信。", "answer": "right"}, {"pair_id": "T4-G3-1", "group": "G3_深度", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "这件事情比较复杂，需要多方面考虑，我们要认真研究。", "right": "课时挤不出来的机制在于总课时是刚性的，任何新增科目都要从别的科目切时间，所以嵌入式开设阻力最小。", "answer": "right"}, {"pair_id": "T3-G2-2", "group": "G2_主题", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "小区门口的公交线路改道了，上班得多走十分钟。", "right": "对带宽受限的场景，先做数据布局重排，让连续访存命中率提升，再考虑增加并发度。", "answer": "right"}, {"pair_id": "T1-G3-1", "group": "G3_深度", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "这个问题很复杂，涉及很多方面，我们要综合考虑各种因素，找到合适的办法。", "right": "沉默的成因绕不开自我决定理论：学生要先感到胜任和归属，才会愿意开口；缺其中一项，激励措施就会失灵。", "answer": "right"}, {"pair_id": "T2-G2-2", "group": "G2_主题", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "今年的篮球赛赛程安排得有点密，队员体力跟不上。", "right": "可以要求提交过程稿，把工具使用记录一并附上，这样评价的是思考过程而不是成品。", "answer": "right"}, {"pair_id": "T4-G2-2", "group": "G2_主题", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "师资可以先从信息科技教师培训起步，配一套开源的教具，降低学校的一次性投入。", "right": "楼下宠物店的猫粮打折，买两袋送一袋。", "answer": "left"}, {"pair_id": "T3-G4-1", "group": "G4_批判", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "我不认同无脑增加核心数的做法，因为核间通信开销会随之上升，最后可能比单核还慢。", "right": "但是有风险，然而有问题，不过要谨慎，风险不能忽视。", "answer": "left"}, {"pair_id": "T4-G1-1", "group": "G1_措辞", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "基础教育阶段开AI课目，不如先嵌进现有的信息科技课，减少排课冲突。", "right": "中小学人工智能课程该怎么开很重要，我们要讨论中小学人工智能课程怎么开。", "answer": "left"}, {"pair_id": "T3-G4-2", "group": "G4_批判", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "然而问题存在，但是需要注意，不过风险很大，要谨慎对待。", "right": "单纯追求峰值算力是站不住的，实测瓶颈在访存，算力再高也喂不饱。", "answer": "right"}, {"pair_id": "T1-G4-2", "group": "G4_批判", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "然而有风险，不过存在问题，但是需要谨慎，问题不能忽视。", "right": "把自愿发言纳入平时分是站不住的，这等于用分数胁迫内向学生，和他们回避的动机正好相反。", "answer": "right"}, {"pair_id": "T4-G3-2", "group": "G3_深度", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "师资短缺的成因是师范培养周期长，短期只能靠在职培训和区域共享教师来缓解。", "right": "要从实际出发，综合考虑各方面的情况，稳步推进。", "answer": "left"}, {"pair_id": "T2-G4-2", "group": "G4_批判", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "然而问题很多，但是要注意风险，不过不能忽视，问题需要谨慎对待。", "right": "一刀切禁止是站不住的，它把使用工具等同于偷懒，忽略了两者完全可能同时成立。", "answer": "right"}, {"pair_id": "T3-G3-1", "group": "G3_深度", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "这个问题需要综合考虑，涉及很多因素，我们要全面分析。", "right": "加速比上不去，本质是 Amdahl 定律起作用：串行部分不缩短，并行部分再优化也收益有限。", "answer": "right"}, {"pair_id": "T2-G2-1", "group": "G2_主题", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "如果一律禁止，学生只会转入地下使用，学校反而失去了引导和观察的机会。", "right": "校门口的快递点最近改了取件时间，晚上八点就关门了，很不方便。", "answer": "left"}, {"pair_id": "T4-G5-1", "group": "G5_质疑", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "这个想法挺好，符合课改方向。", "right": "我不赞成在小学讲神经网络，因为抽象程度超出了这个年龄段的认知水平。", "answer": "right"}, {"pair_id": "T1-G5-1", "group": "G5_质疑", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "我不同意把点名次数当指标，因为点名只会让学生应付，真正的问题在课堂内容本身。", "right": "我觉得这个思路挺好的，符合现在的教学改革方向。", "answer": "left"}, {"pair_id": "T5-G1-2", "group": "G1_措辞", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "想设计高效率的团队任务成绩评定制度，把互评和自评都留档。", "right": "如何设计公平高效的小组作业评分机制是关键，设计公平高效的小组作业评分机制要公平高效，所以要设计评分机制。", "answer": "left"}, {"pair_id": "T1-G1-2", "group": "G1_措辞", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "想提高师范学生在课上的投入度，先把评价从点名次数改成思考质量。", "right": "师范生课堂参与度需要提升，提升师范生课堂参与度是关键，所以要提升课堂参与度。", "answer": "left"}, {"pair_id": "T5-G3-1", "group": "G3_深度", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "搭便车的成因是个人贡献不可观测，只要不可观测，搭便车就是理性选择，所以机制必须先解决可观测性。", "right": "这个问题涉及很多方面，需要综合考虑，认真对待。", "answer": "left"}, {"pair_id": "T5-G4-1", "group": "G4_批判", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "我不认同完全由组内互评决定个人分，因为小圈子会互相抬分，边缘学生反而吃亏。", "right": "但是有风险，然而有问题，不过要谨慎，问题不能忽视。", "answer": "left"}, {"pair_id": "T1-G2-2", "group": "G2_主题", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "最近宿舍空调总出故障，报修了三次还没人来处理。", "right": "把讲台时间切块，每块交给一个小组主导，授课者退到旁边做追问。", "answer": "right"}, {"pair_id": "T4-G4-1", "group": "G4_批判", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "我反对在小学阶段就讲神经网络原理，因为抽象程度远超这个年龄段的认知水平，只会造成畏难。", "right": "但是有风险，然而有问题，不过需要谨慎，不能忽视问题。", "answer": "left"}, {"pair_id": "T1-G5-2", "group": "G5_质疑", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "这个方案有个漏洞，因为它假设学生不愿发言是态度问题，而实际上更可能是问题没有讨论空间。", "right": "同意上面的说法，这个方法应该会有效果。", "answer": "left"}, {"pair_id": "T4-G5-2", "group": "G5_质疑", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "这个方案有问题，因为它把编程等同于人工智能，两者目标并不一样。", "right": "同意，这样开设应该可行。", "answer": "left"}, {"pair_id": "T1-G4-1", "group": "G4_批判", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "但是不过然而问题风险，我们要谨慎，但是也要注意，然而不能忽视问题。", "right": "我不认同用发言次数考核，因为它会把学生逼成凑数的表演，反而挤掉了真正的思考。", "answer": "right"}, {"pair_id": "T1-G3-2", "group": "G3_深度", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "参与感本质上是三种心理需要被满足的结果，而不是发言次数本身；因此机制设计的落点应是需要满足。", "right": "只要大家都重视起来，齐心协力，这个问题一定能得到很好的解决。", "answer": "left"}, {"pair_id": "T4-G4-2", "group": "G4_批判", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "把编程等同于人工智能是站不住的，两者目标不同，混为一谈会让课程失去重心。", "right": "然而问题不少，但是要注意，不过风险存在，需要谨慎。", "answer": "left"}, {"pair_id": "T2-G5-2", "group": "G5_质疑", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "同意，这个方向应该没问题。", "right": "这个判断有问题，因为它把工具使用等同于学术不端，忽略了两者可以并存。", "answer": "right"}, {"pair_id": "T3-G5-1", "group": "G5_质疑", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "我不同意无脑加核，因为核间通信开销会随核数上升，最后可能更慢。", "right": "这个思路不错，应该能提升性能。", "answer": "left"}, {"pair_id": "T5-G4-2", "group": "G4_批判", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "然而问题很多，但是需要注意，不过风险存在，要谨慎。", "right": "按贡献比例直接线性折算成绩是站不住的，它假设贡献可以被精确测量，而事实上不能。", "answer": "right"}, {"pair_id": "T2-G5-1", "group": "G5_质疑", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "我觉得引导是对的，符合现在的趋势。", "right": "我不认同直接禁止，因为这样只会把使用推到看不见的地方，反而没法引导。", "answer": "right"}, {"pair_id": "T4-G2-1", "group": "G2_主题", "topic": "中小学人工智能课程该怎么开？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "建议先在小学阶段做体验式活动，初中阶段引入算法思想，高中阶段再涉及模型原理，分层推进。", "right": "电影院的爆米花涨价了，一小桶要二十八块。", "answer": "left"}, {"pair_id": "T1-G1-1", "group": "G1_措辞", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "师范学生在课上的投入度，关键不在点名的次数，而在他们敢不敢试错。", "right": "如何提升师范生课堂参与度很重要，我们要重视如何提升师范生课堂参与度。", "answer": "left"}, {"pair_id": "T3-G5-2", "group": "G5_质疑", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "同意，这样优化应该有效果。", "right": "这个结论有漏洞，因为它只看峰值算力，没考虑访存带宽才是实际瓶颈。", "answer": "right"}, {"pair_id": "T5-G2-2", "group": "G2_主题", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "最近新出的那部剧口碑挺好，准备追一下。", "right": "把大任务拆成有明确交付物的阶段，每阶段单独记录贡献，避免期末一次性分摊。", "answer": "right"}, {"pair_id": "T2-G1-1", "group": "G1_措辞", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "大学生使用AI写作业，学校该禁止还是引导，这个问题很重要，我们要讨论大学生使用AI写作业。", "right": "高校学生借助工具完成课业，院校与其一律不许，不如把使用边界写清楚。", "answer": "right"}, {"pair_id": "T2-G1-2", "group": "G1_措辞", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "学校该禁止还是引导，大学生使用AI写作业需要引导，AI写作业要引导，学校要引导。", "right": "院校对高校学生的课业，与其一律禁止，不如疏导成过程留痕。", "answer": "right"}, {"pair_id": "T5-G3-2", "group": "G3_深度", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "要多方面权衡，全面考虑各种因素，找到合适的做法。", "right": "公平感的机制在于过程透明而非结果平均，学生更在意规则是否事先说清楚。", "answer": "right"}, {"pair_id": "T5-G5-2", "group": "G5_质疑", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**提出了实质质疑**？（另一条只是在附和「挺好的/同意」）", "left": "同意，这样评分应该没问题。", "right": "这个设计有漏洞，因为它假设贡献能被精确测量，而实际上做不到。", "answer": "right"}, {"pair_id": "T3-G1-1", "group": "G1_措辞", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "如何优化大规模矩阵乘法的并行计算策略很重要，优化大规模矩阵乘法的并行计算策略是关键，所以要优化并行计算策略。", "right": "调优超大规模矩阵相乘的并行处理方案，关键不在核数，而在核间搬运那段路。", "answer": "right"}, {"pair_id": "T3-G3-2", "group": "G3_深度", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "通信复杂度随核心数增长的机制决定了存在一个最优核心数，超过它反而变慢。", "right": "要多方面考虑，权衡各种因素，找到合适的方案。", "answer": "left"}, {"pair_id": "T3-G1-2", "group": "G1_措辞", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**真正在讨论这个课题**？（另一条只是在复述课题里的词，没说出什么内容）", "left": "大规模矩阵乘法的并行计算策略需要优化，如何优化大规模矩阵乘法的并行计算策略是重点，所以要优化并行计算策略。", "right": "矩阵相乘的并行处理方案要调优，先把数据布局重排一遍，再考虑加核。", "answer": "right"}, {"pair_id": "T2-G4-1", "group": "G4_批判", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**给出了反对的理由**？（另一条只有「但是/然而/风险」这类词，没给理由）", "left": "我反对把检测结果直接当处分依据，因为现有检测工具的误判率并不透明，这会伤到没有使用的学生。", "right": "但是有风险，然而有问题，不过要谨慎，风险不能忽视。", "answer": "left"}, {"pair_id": "T1-G2-1", "group": "G2_主题", "topic": "如何提升师范生课堂参与度？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "食堂三楼新开了一家麻辣烫，味道比外面便宜，中午排队要等二十分钟。", "right": "可以让每组先内部讨论两分钟再派代表发言，降低单人暴露的风险，同时把发言质量纳入过程记录。", "answer": "right"}, {"pair_id": "T5-G2-1", "group": "G2_主题", "topic": "如何设计公平高效的小组作业评分机制？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "可以采用贡献声明加同伴互评双轨，两条线不一致时触发教师复核，避免单人说了算。", "right": "周末的天气不错，适合去公园走走。", "answer": "left"}, {"pair_id": "T2-G3-1", "group": "G3_深度", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "question": "哪一条**说明了原因或机制**（为什么会这样 / 它靠什么起作用）？（另一条只是泛泛而谈）", "left": "这个问题需要从多个角度看待，我们要全面考虑，慎重决定。", "right": "这背后是评价机制的问题：只要评价只看成品，工具就会被用来替代思考；评价转向过程，工具才会变成脚手架。", "answer": "right"}, {"pair_id": "T3-G2-1", "group": "G2_主题", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "question": "哪一条**与这个课题有关**？（另一条讲的是与课题毫不相干的事）", "left": "采用分块策略让每个核心持有固定的小块，减少重复访存，再配合通信与计算的重叠调度。", "right": "市图书馆新馆的开放时间调整了，周末只开到下午五点。", "answer": "left"}];
+let i = 0; const ans = {};
+const who = document.getElementById('who');
+who.value = localStorage.getItem('pair_who') || '';
+who.oninput = () => localStorage.setItem('pair_who', who.value);
+function render(){
+  document.getElementById('pb').style.width = (100*i/P.length) + '%';
+  const m = document.getElementById('main');
+  if(i >= P.length) return finish(m);
+  const p = P[i];
+  m.innerHTML = '<div class="row">第 ' + (i+1) + ' / ' + P.length + ' 对 ｜ ' + p.group +
+    ' ｜ 课题：' + p.topic + '</div>' +
+    '<div class="q">' + p.question + '</div>' +
+    '<div class="opts">' +
+    '<div class="opt" onclick="pick(\'left\')"><div class="lab">左边 ←</div>' + esc(p.left) + '</div>' +
+    '<div class="opt" onclick="pick(\'right\')"><div class="lab">右边 →</div>' + esc(p.right) + '</div>' +
+    '</div>';
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function pick(v){ ans[P[i].pair_id] = v; i++; render(); }
+function payload(){
+  return {task: '2afc', verifier: (who.value||'匿名'), answers: ans,
+          n: Object.keys(ans).length, items: P.length,
+          submitted_at: new Date().toISOString()};
+}
+function accessKey(){ try{ return new URLSearchParams(location.search).get('key')||''; }catch(e){ return ''; } }
+function finish(m){
+  // 本地先算一下成绩（页面不依赖服务端也能看结果）
+  let ok = 0, done = 0; const byg = {};
+  P.forEach(p => {
+    const a = ans[p.pair_id]; if(!a) return;
+    done++;
+    const g = byg[p.group] = byg[p.group] || {ok:0,n:0};
+    g.n++;
+    if(a === p.answer){ ok++; g.ok++; }
+  });
+  let rows = '';
+  for(const g in byg) rows += '<tr><td>'+g+'</td><td>'+byg[g].ok+' / '+byg[g].n+
+    '</td><td>'+Math.round(100*byg[g].ok/byg[g].n)+'%</td></tr>';
+  m.innerHTML = '<div class="done"><h2 style="font-size:17px">已判 '+done+' / '+P.length+' 对</h2>' +
+    '<p style="color:#65676b;font-size:13px">本次正确率（猜中率 50%）：<b>'+
+    (done? Math.round(100*ok/done)+'%' : '—')+'</b></p>' +
+    (rows? '<table><tr><th>组</th><th>正确</th><th>正确率</th></tr>'+rows+'</table>' : '') +
+    '<div style="margin-top:14px"><button onclick="i=0;render()">回到开头</button>' +
+    '<button class="y" onclick="submitCloud()">提交到云端</button>' +
+    '<button onclick="save()">导出文件</button></div>' +
+    '<div id="msg" style="margin-top:10px;font-size:13px"></div></div>';
+}
+function submitCloud(){
+  const m = document.getElementById('msg'), k = accessKey();
+  if(!k){ m.innerHTML = '❌ 本页 URL 无 <code>?key=</code>，无法提交。请用带口令的地址打开。'; return; }
+  m.textContent = '提交中…';
+  fetch('/api/blind/submit', {method:'POST',
+    headers:{'Content-Type':'application/json','X-Access-Key':k},
+    body: JSON.stringify(payload())})
+    .then(r=>r.json()).then(d=>{ m.innerHTML = d.ok ? ('✅ 已提交：<b>'+d.saved+'</b>') :
+      ('❌ 失败：'+(d.detail||d.error||'未知')); })
+    .catch(e=>{ m.innerHTML = '❌ 失败（'+e+'），请改用「导出文件」。'; });
+}
+function save(){
+  const b = new Blob([JSON.stringify(payload(),null,1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = 'pair_' + (who.value||'anon').replace(/[^\w\u4e00-\u9fa5]/g,'') + '.json';
+  a.click();
+}
+document.addEventListener('keydown', e => {
+  if(e.target.tagName === 'INPUT') return;
+  if(e.key === 'ArrowLeft') pick('left');
+  else if(e.key === 'ArrowRight') pick('right');
+});
+render();
+</script></body></html>

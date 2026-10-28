@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课堂模拟器 · AI教学实训舱</title>
+<style>
+:root {
+  --primary:#00d4ff; --secondary:#7b2ff7; --bg:#0d1117; --card:#16181D;
+  --card2:#1c2028; --border:#272B33; --text:#E2E8F0; --muted:#94A3B8;
+  --success:#10B981; --warning:#F59E0B; --error:#EF4444; --info:#3B82F6;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Microsoft YaHei','PingFang SC',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; background:linear-gradient(135deg,#16181D,#1f2430); border-bottom:1px solid var(--border); }
+.topbar h1 { font-size:20px; display:flex; align-items:center; gap:10px; }
+.topbar .badge { font-size:12px; background:rgba(16,185,129,.15); color:var(--success); padding:4px 12px; border-radius:16px; }
+.wrap { display:flex; gap:0; }
+.sidebar { width:220px; min-height:calc(100vh - 65px); background:#13161c; border-right:1px solid var(--border); padding:18px 12px; }
+.sidebar .nav-item { padding:10px 14px; border-radius:8px; margin-bottom:4px; cursor:pointer; color:var(--muted); font-size:14px; display:flex; align-items:center; gap:10px; transition:all .15s; }
+.sidebar .nav-item:hover, .sidebar .nav-item.active { background:rgba(0,212,255,.08); color:var(--primary); }
+.main { flex:1; padding:24px; }
+/* 课堂主体 */
+.phase-bar { display:flex; gap:10px; margin-bottom:20px; }
+.phase-btn { flex:1; padding:10px; text-align:center; border-radius:10px; border:1px solid var(--border); color:var(--muted); cursor:pointer; font-size:14px; transition:all .15s; background:var(--card); }
+.phase-btn.active { background:rgba(0,212,255,.12); color:var(--primary); border-color:var(--primary); font-weight:700; }
+/* 学生区 */
+.students { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+.student-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; }
+.student-card .head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.student-card .avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.student-card .name { font-weight:700; font-size:15px; }
+.student-card .personality { font-size:11px; color:var(--muted); }
+.student-card .resp { font-size:13px; color:#cbd5e1; line-height:1.6; min-height:60px; background:var(--card2); border-radius:8px; padding:10px; }
+.student-card .meter { margin-top:8px; font-size:11px; color:var(--muted); display:flex; gap:10px; }
+/* 输入区 */
+.ctrl { display:flex; gap:10px; margin-bottom:20px; }
+.ctrl input { flex:1; background:var(--card2); border:1px solid var(--border); color:var(--text); padding:12px 16px; border-radius:10px; font-size:14px; outline:none; }
+.ctrl input:focus { border-color:var(--primary); }
+.ctrl button { background:var(--primary); color:#06121e; border:none; padding:12px 24px; border-radius:10px; font-weight:700; cursor:pointer; font-size:14px; }
+.ctrl button:hover { filter:brightness(1.15); }
+.ctrl button.reset { background:transparent; border:1px solid var(--border); color:var(--muted); }
+/* 反馈区 */
+.feedback { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.feedback h3 { font-size:15px; color:var(--primary); margin-bottom:12px; }
+.feedback .metrics { display:flex; gap:20px; margin-bottom:12px; }
+.feedback .metric { flex:1; background:var(--card2); border-radius:8px; padding:12px; text-align:center; }
+.feedback .metric .v { font-size:22px; font-weight:800; color:var(--primary); }
+.feedback .metric .l { font-size:12px; color:var(--muted); margin-top:4px; }
+.feedback .sugg { font-size:13px; color:#cbd5e1; line-height:1.8; }
+.feedback .sugg li { margin-left:18px; }
+.history { margin-top:14px; max-height:180px; overflow-y:auto; }
+.history .item { font-size:12px; color:var(--muted); padding:4px 0; border-bottom:1px dashed var(--border); }
+.loading { color:var(--primary); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>🎓 课堂模拟器 <span class="badge">AI 教学实训舱</span></h1>
+  <div style="font-size:13px;color:var(--muted);">6 名 AI 学生 · 师范生模拟教学</div>
+</div>
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="nav-item active">📊 课堂控制</div>
+    <div class="nav-item">👥 学生状态</div>
+    <div class="nav-item">💬 课堂反馈</div>
+    <div class="nav-item">🔄 重置课堂</div>
+  </aside>
+  <main class="main">
+    <!-- 环节切换 -->
+    <div class="phase-bar" id="phaseBar">
+      <div class="phase-btn active" data-phase="导入">📥 导入</div>
+      <div class="phase-btn" data-phase="讲解">📖 讲解</div>
+      <div class="phase-btn" data-phase="互动">🤝 互动</div>
+      <div class="phase-btn" data-phase="总结">📝 总结</div>
+    </div>
+
+    <!-- 学生区 -->
+    <div class="students" id="students"></div>
+
+    <!-- 输入区 -->
+    <div class="ctrl">
+      <input id="instruction" placeholder="输入你的教学指令，例如：同学们，今天我们学习分数的概念" onkeydown="if(event.key==='Enter')sendTeach()">
+      <button onclick="sendTeach()">🚀 发送指令</button>
+      <button class="reset" onclick="resetClass()">🔄 重置</button>
+    </div>
+
+    <!-- 反馈区 -->
+    <div class="feedback">
+      <h3>📊 课堂反馈</h3>
+      <div class="metrics" id="metrics">
+        <div class="metric"><div class="v" id="mUnderstand">--</div><div class="l">平均理解度</div></div>
+        <div class="metric"><div class="v" id="mParticipate">--</div><div class="l">平均参与度</div></div>
+        <div class="metric"><div class="v" id="mEnergy">--</div><div class="l">课堂能量</div></div>
+        <div class="metric"><div class="v" id="mAttention">--</div><div class="l">课堂专注度</div></div>
+      </div>
+      <div id="atmosphere" style="font-size:14px;color:var(--warning);margin-bottom:10px;"></div>
+      <ul class="sugg" id="suggestions"></ul>
+      <div class="history" id="history"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+var API = "http://127.0.0.1:5020";
+var currentPhase = "导入";
+var historyLog = [];
+
+// 学生颜色
+var colors = ["#00d4ff","#7b2ff7","#f59e0b","#10b981","#ef4444","#3b82f6"];
+var emojis = ["😀","😶","😜","📝","🐢","🧠"];
+
+// 加载学生
+function loadStudents(){
+  fetch(API + "/api/classroom/students").then(function(r){return r.json();}).then(function(d){
+    var box = document.getElementById("students");
+    box.innerHTML = "";
+    (d.students||[]).forEach(function(s, i){
+      var c = document.createElement("div");
+      c.className = "student-card";
+      c.innerHTML = '<div class="head"><div class="avatar" style="background:' + colors[i%6] + '22;">' + emojis[i%6] + '</div>' +
+        '<div><div class="name">' + esc(s.name) + '</div><div class="personality">' + esc(s.personality) + '</div></div></div>' +
+        '<div class="resp" id="resp-' + i + '">等待老师指令…</div>' +
+        '<div class="meter">理解 <span id="u-' + i + '">0</span> · 参与 <span id="p-' + i + '">0</span> · 精力 <span id="e-' + i + '">100</span></div>';
+      box.appendChild(c);
+    });
+  });
+}
+
+// 发送教学指令
+function sendTeach(){
+  var input = document.getElementById("instruction");
+  var text = input.value.trim();
+  if(!text){ alert("请输入教学指令"); return; }
+  document.getElementById("history").innerHTML = '<div class="item">⏳ AI 学生响应中…</div>';
+  fetch(API + "/api/classroom/teach", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({instruction: text, phase: currentPhase})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(!d.ok){ alert("错误: " + JSON.stringify(d.detail||"")); return; }
+    renderResult(d.result);
+    logHistory(currentPhase, text);
+  }).catch(function(e){ alert("连接失败: " + e.message); });
+}
+
+function renderResult(result){
+  // 学生响应
+  result.responses.forEach(function(r, i){
+    var resp = document.getElementById("resp-" + i);
+    if(resp) resp.textContent = r.response;
+    var u = document.getElementById("u-" + i); if(u) u.textContent = r.understanding;
+    var p = document.getElementById("p-" + i); if(p) p.textContent = r.participation;
+    var e = document.getElementById("e-" + i); if(e) e.textContent = r.energy;
+  });
+  // 指标
+  var m = result.classroom_metrics || {};
+  document.getElementById("mUnderstand").textContent = m.avg_understanding;
+  document.getElementById("mParticipate").textContent = m.avg_participation;
+  document.getElementById("mEnergy").textContent = m.classroom_energy;
+  document.getElementById("mAttention").textContent = m.classroom_attention;
+  document.getElementById("atmosphere").textContent = "🎭 课堂氛围：" + (result.atmosphere || "—");
+  // 建议
+  var sugg = document.getElementById("suggestions");
+  sugg.innerHTML = "";
+  (result.suggestions||[]).forEach(function(s){
+    var li = document.createElement("li");
+    li.textContent = s;
+    sugg.appendChild(li);
+  });
+}
+
+function logHistory(phase, text){
+  historyLog.unshift("[" + phase + "] " + text);
+  if(historyLog.length > 8) historyLog.pop();
+  renderHistory();
+}
+
+function renderHistory(){
+  var h = document.getElementById("history");
+  h.innerHTML = historyLog.map(function(x){ return '<div class="item">' + esc(x) + '</div>'; }).join("");
+}
+
+function resetClass(){
+  fetch(API + "/api/classroom/reset", {method:"POST"}).then(function(){
+    historyLog = [];
+    renderHistory();
+    loadStudents();
+    document.getElementById("mUnderstand").textContent = "--";
+    document.getElementById("mParticipate").textContent = "--";
+    document.getElementById("mEnergy").textContent = "--";
+    document.getElementById("mAttention").textContent = "--";
+    document.getElementById("atmosphere").textContent = "";
+    document.getElementById("suggestions").innerHTML = "";
+  });
+}
+
+// 环节切换
+document.querySelectorAll(".phase-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    document.querySelectorAll(".phase-btn").forEach(function(x){x.classList.remove("active");});
+    this.classList.add("active");
+    currentPhase = this.dataset.phase;
+  });
+});
+
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+loadStudents();
+</script>
+</body>
+</html>

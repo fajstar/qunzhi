@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>构造判据集 · 盲评</title>
+<style>
+ body{font-family:system-ui,"Microsoft YaHei",sans-serif;margin:0;background:#f5f6f8;color:#1c1e21}
+ .wrap{max-width:860px;margin:0 auto;padding:22px}
+ h1{font-size:19px;margin:0 0 6px}
+ .sub{color:#65676b;font-size:13px;margin-bottom:14px;line-height:1.6}
+ .bar{height:7px;background:#e4e6eb;border-radius:4px;overflow:hidden;margin-bottom:16px}
+ .bar>i{display:block;height:100%;background:#1877f2;width:0}
+ .card{background:#fff;border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+ .row{font-size:12px;color:#65676b;margin-bottom:8px}
+ .tag{display:inline-block;padding:2px 8px;border-radius:11px;font-size:12px;margin-right:6px}
+ .P{background:#e7f3ff;color:#1877f2}.N{background:#fff0e6;color:#d2691e}
+ .q{background:#f7f8fa;border-left:3px solid #1877f2;padding:10px 12px;border-radius:5px;
+    font-size:14px;line-height:1.65;margin:12px 0 16px}
+ .txt{font-size:17px;line-height:1.85;padding:14px 16px;background:#fafbfc;border:1px solid #e4e6eb;
+      border-radius:7px;margin-bottom:18px;min-height:56px}
+ .btns{display:flex;gap:10px}
+ button{flex:1;padding:13px;font-size:15px;border:1px solid #ccd0d5;background:#fff;border-radius:7px;
+        cursor:pointer;font-family:inherit}
+ button:hover{background:#f0f2f5}
+ button.y{border-color:#31a24c;color:#1b7a34}button.n{border-color:#e4574a;color:#b3271b}
+ button.u{border-color:#b0b3b8;color:#65676b}
+ .k{font-size:11px;color:#8a8d91;display:block;margin-top:3px}
+ .done{text-align:center;padding:30px 10px}
+ .done textarea{width:100%;height:150px;font-family:monospace;font-size:12px;margin-top:12px}
+ .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+ .hd input{padding:7px 10px;border:1px solid #ccd0d5;border-radius:6px;font-family:inherit}
+ .note{font-size:12px;color:#8a8d91;margin-top:14px;line-height:1.7}
+</style></head><body><div class="wrap">
+<div class="hd"><h1>构造判据集 · 语义标签盲评</h1>
+ <input id="who" placeholder="你的名字（用于汇总 κ）" style="width:200px"></div>
+<div class="sub">逐条判断：<b>这段话是否符合"被赋予的标签"的定义？</b>
+ 符合 = 标签正确；不符合 = 标签有误；不确定 = 拿不准（会单独统计，不硬塞进对/错）。
+ 快捷键 <b>1</b> 符合 ｜ <b>2</b> 不符合 ｜ <b>3</b> 不确定 ｜ <b>←</b> 上一条。</div>
+<div class="bar"><i id="pb"></i></div>
+<div id="main"></div>
+<div class="note">本页不包含任何尺子读数、也不包含构造脚本——只给你"组别 + 标签 + 定义 + 文本"。
+ 顺序由固定随机种子打乱，两位核验人看到同一顺序。</div>
+</div>
+<script>
+const ITEMS = [{"id": "T4-G4-P2", "group": "G4_批判", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "把编程等同于人工智能是站不住的，两者目标不同，混为一谈会让课程失去重心。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T1-G4-N2", "group": "G4_批判", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "然而有风险，不过存在问题，但是需要谨慎，问题不能忽视。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T1-G1-N1", "group": "G1_措辞", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "如何提升师范生课堂参与度很重要，我们要重视如何提升师范生课堂参与度。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T3-G1-N1", "group": "G1_措辞", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "如何优化大规模矩阵乘法的并行计算策略很重要，优化大规模矩阵乘法的并行计算策略是关键，所以要优化并行计算策略。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T4-G4-N1", "group": "G4_批判", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "但是有风险，然而有问题，不过需要谨慎，不能忽视问题。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T4-G3-N1", "group": "G3_深度", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "这件事情比较复杂，需要多方面考虑，我们要认真研究。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T1-G4-P2", "group": "G4_批判", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "把自愿发言纳入平时分是站不住的，这等于用分数胁迫内向学生，和他们回避的动机正好相反。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T3-G4-N2", "group": "G4_批判", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "然而问题存在，但是需要注意，不过风险很大，要谨慎对待。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T3-G2-P1", "group": "G2_主题", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "采用分块策略让每个核心持有固定的小块，减少重复访存，再配合通信与计算的重叠调度。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T2-G4-N2", "group": "G4_批判", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "然而问题很多，但是要注意风险，不过不能忽视，问题需要谨慎对待。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T3-G3-P1", "group": "G3_深度", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "加速比上不去，本质是 Amdahl 定律起作用：串行部分不缩短，并行部分再优化也收益有限。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T2-G3-N2", "group": "G3_深度", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "各方面都要兼顾，既要考虑这个，也要考虑那个，综合起来看。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T1-G2-N2", "group": "G2_主题", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "最近宿舍空调总出故障，报修了三次还没人来处理。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T5-G1-P2", "group": "G1_措辞", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "想设计高效率的团队任务成绩评定制度，把互评和自评都留档。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T4-G1-N1", "group": "G1_措辞", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "中小学人工智能课程该怎么开很重要，我们要讨论中小学人工智能课程怎么开。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T5-G4-N2", "group": "G4_批判", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "然而问题很多，但是需要注意，不过风险存在，要谨慎。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T2-G2-N2", "group": "G2_主题", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "今年的篮球赛赛程安排得有点密，队员体力跟不上。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T5-G1-N2", "group": "G1_措辞", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "如何设计公平高效的小组作业评分机制是关键，设计公平高效的小组作业评分机制要公平高效，所以要设计评分机制。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T5-G3-N2", "group": "G3_深度", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "要多方面权衡，全面考虑各种因素，找到合适的做法。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T4-G2-P2", "group": "G2_主题", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "师资可以先从信息科技教师培训起步，配一套开源的教具，降低学校的一次性投入。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T2-G1-P1", "group": "G1_措辞", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "高校学生借助工具完成课业，院校与其一律不许，不如把使用边界写清楚。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T5-G2-N2", "group": "G2_主题", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "最近新出的那部剧口碑挺好，准备追一下。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T2-G4-P2", "group": "G4_批判", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "一刀切禁止是站不住的，它把使用工具等同于偷懒，忽略了两者完全可能同时成立。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T5-G2-N1", "group": "G2_主题", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "周末的天气不错，适合去公园走走。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T5-G3-P1", "group": "G3_深度", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "搭便车的成因是个人贡献不可观测，只要不可观测，搭便车就是理性选择，所以机制必须先解决可观测性。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T4-G2-N2", "group": "G2_主题", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "楼下宠物店的猫粮打折，买两袋送一袋。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T1-G3-N1", "group": "G3_深度", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "这个问题很复杂，涉及很多方面，我们要综合考虑各种因素，找到合适的办法。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T4-G4-N2", "group": "G4_批判", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "然而问题不少，但是要注意，不过风险存在，需要谨慎。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T4-G3-N2", "group": "G3_深度", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "要从实际出发，综合考虑各方面的情况，稳步推进。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T4-G2-N1", "group": "G2_主题", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "电影院的爆米花涨价了，一小桶要二十八块。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T3-G2-N2", "group": "G2_主题", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "小区门口的公交线路改道了，上班得多走十分钟。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T1-G2-P1", "group": "G2_主题", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "可以让每组先内部讨论两分钟再派代表发言，降低单人暴露的风险，同时把发言质量纳入过程记录。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T1-G4-N1", "group": "G4_批判", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "但是不过然而问题风险，我们要谨慎，但是也要注意，然而不能忽视问题。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T1-G3-N2", "group": "G3_深度", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "只要大家都重视起来，齐心协力，这个问题一定能得到很好的解决。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T2-G3-P2", "group": "G3_深度", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "禁令失效的机制在于检测手段本身不可靠，误判会先伤到无辜者，进而让规则整体失去威信。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T5-G1-P1", "group": "G1_措辞", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "团队任务的成绩评定制度要公正，先让每个人写清楚自己做了什么，再分配权重。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T1-G1-P2", "group": "G1_措辞", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "想提高师范学生在课上的投入度，先把评价从点名次数改成思考质量。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T3-G1-P2", "group": "G1_措辞", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "矩阵相乘的并行处理方案要调优，先把数据布局重排一遍，再考虑加核。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T3-G1-N2", "group": "G1_措辞", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "大规模矩阵乘法的并行计算策略需要优化，如何优化大规模矩阵乘法的并行计算策略是重点，所以要优化并行计算策略。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T3-G4-P2", "group": "G4_批判", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "单纯追求峰值算力是站不住的，实测瓶颈在访存，算力再高也喂不饱。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T1-G3-P1", "group": "G3_深度", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "沉默的成因绕不开自我决定理论：学生要先感到胜任和归属，才会愿意开口；缺其中一项，激励措施就会失灵。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T2-G3-P1", "group": "G3_深度", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "这背后是评价机制的问题：只要评价只看成品，工具就会被用来替代思考；评价转向过程，工具才会变成脚手架。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T5-G4-P2", "group": "G4_批判", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "按贡献比例直接线性折算成绩是站不住的，它假设贡献可以被精确测量，而事实上不能。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T4-G4-P1", "group": "G4_批判", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "我反对在小学阶段就讲神经网络原理，因为抽象程度远超这个年龄段的认知水平，只会造成畏难。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T5-G3-P2", "group": "G3_深度", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "公平感的机制在于过程透明而非结果平均，学生更在意规则是否事先说清楚。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T4-G3-P1", "group": "G3_深度", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "课时挤不出来的机制在于总课时是刚性的，任何新增科目都要从别的科目切时间，所以嵌入式开设阻力最小。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T2-G3-N1", "group": "G3_深度", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "这个问题需要从多个角度看待，我们要全面考虑，慎重决定。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T2-G2-P1", "group": "G2_主题", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "如果一律禁止，学生只会转入地下使用，学校反而失去了引导和观察的机会。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T2-G1-N1", "group": "G1_措辞", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "大学生使用AI写作业，学校该禁止还是引导，这个问题很重要，我们要讨论大学生使用AI写作业。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T4-G2-P1", "group": "G2_主题", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "建议先在小学阶段做体验式活动，初中阶段引入算法思想，高中阶段再涉及模型原理，分层推进。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T1-G1-N2", "group": "G1_措辞", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "师范生课堂参与度需要提升，提升师范生课堂参与度是关键，所以要提升课堂参与度。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T3-G3-N2", "group": "G3_深度", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "要多方面考虑，权衡各种因素，找到合适的方案。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T5-G4-N1", "group": "G4_批判", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "但是有风险，然而有问题，不过要谨慎，问题不能忽视。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T4-G1-P1", "group": "G1_措辞", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "基础教育阶段开AI课目，不如先嵌进现有的信息科技课，减少排课冲突。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T1-G2-P2", "group": "G2_主题", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "把讲台时间切块，每块交给一个小组主导，授课者退到旁边做追问。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T2-G1-N2", "group": "G1_措辞", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "学校该禁止还是引导，大学生使用AI写作业需要引导，AI写作业要引导，学校要引导。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T2-G1-P2", "group": "G1_措辞", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "院校对高校学生的课业，与其一律禁止，不如疏导成过程留痕。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T5-G2-P2", "group": "G2_主题", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "把大任务拆成有明确交付物的阶段，每阶段单独记录贡献，避免期末一次性分摊。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T1-G4-P1", "group": "G4_批判", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "我不认同用发言次数考核，因为它会把学生逼成凑数的表演，反而挤掉了真正的思考。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T1-G3-P2", "group": "G3_深度", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "参与感本质上是三种心理需要被满足的结果，而不是发言次数本身；因此机制设计的落点应是需要满足。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T5-G2-P1", "group": "G2_主题", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "可以采用贡献声明加同伴互评双轨，两条线不一致时触发教师复核，避免单人说了算。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T3-G2-P2", "group": "G2_主题", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "对带宽受限的场景，先做数据布局重排，让连续访存命中率提升，再考虑增加并发度。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T2-G4-P1", "group": "G4_批判", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "我反对把检测结果直接当处分依据，因为现有检测工具的误判率并不透明，这会伤到没有使用的学生。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T5-G3-N1", "group": "G3_深度", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "这个问题涉及很多方面，需要综合考虑，认真对待。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T3-G2-N1", "group": "G2_主题", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "市图书馆新馆的开放时间调整了，周末只开到下午五点。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T5-G1-N1", "group": "G1_措辞", "label": "N", "topic": "如何设计公平高效的小组作业评分机制？", "text": "如何设计公平高效的小组作业评分机制很重要，我们要设计公平高效的小组作业评分机制。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T1-G1-P1", "group": "G1_措辞", "label": "P", "topic": "如何提升师范生课堂参与度？", "text": "师范学生在课上的投入度，关键不在点名的次数，而在他们敢不敢试错。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T4-G3-P2", "group": "G3_深度", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "师资短缺的成因是师范培养周期长，短期只能靠在职培训和区域共享教师来缓解。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T4-G1-P2", "group": "G1_措辞", "label": "P", "topic": "中小学人工智能课程该怎么开？", "text": "在基础教育阶段开AI课目，关键不在讲原理，而在让学生动手做个小东西。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T2-G2-N1", "group": "G2_主题", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "校门口的快递点最近改了取件时间，晚上八点就关门了，很不方便。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T2-G2-P2", "group": "G2_主题", "label": "P", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "可以要求提交过程稿，把工具使用记录一并附上，这样评价的是思考过程而不是成品。", "def": "这段话**围绕该课题**做实质性讨论（谈的是课题涉及的事）。"}, {"id": "T5-G4-P1", "group": "G4_批判", "label": "P", "topic": "如何设计公平高效的小组作业评分机制？", "text": "我不认同完全由组内互评决定个人分，因为小圈子会互相抬分，边缘学生反而吃亏。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}, {"id": "T3-G4-N1", "group": "G4_批判", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "但是有风险，然而有问题，不过要谨慎，风险不能忽视。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T3-G3-N1", "group": "G3_深度", "label": "N", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "这个问题需要综合考虑，涉及很多因素，我们要全面分析。", "def": "这段话**泛泛而谈、不涉及任何机制**（正确的空话，换个课题也成立）。"}, {"id": "T4-G1-N2", "group": "G1_措辞", "label": "N", "topic": "中小学人工智能课程该怎么开？", "text": "人工智能课程该怎么开，中小学人工智能课程要开，课程开设是关键，所以要开课程。", "def": "这段话**只是在复读课题里的原词**，几乎没有提供任何新信息。"}, {"id": "T3-G3-P2", "group": "G3_深度", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "通信复杂度随核心数增长的机制决定了存在一个最优核心数，超过它反而变慢。", "def": "这段话**触及课题的核心机制**——说明了「为什么会这样」或「它靠什么起作用」。"}, {"id": "T3-G1-P1", "group": "G1_措辞", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "调优超大规模矩阵相乘的并行处理方案，关键不在核数，而在核间搬运那段路。", "def": "这段话在讨论**该课题本身**，但换用了同义说法（基本不使用课题里的原词）。"}, {"id": "T1-G2-N1", "group": "G2_主题", "label": "N", "topic": "如何提升师范生课堂参与度？", "text": "食堂三楼新开了一家麻辣烫，味道比外面便宜，中午排队要等二十分钟。", "def": "这段话**与课题完全无关**（换成了一件毫不相干的事）。"}, {"id": "T2-G4-N1", "group": "G4_批判", "label": "N", "topic": "大学生使用AI写作业，学校该禁止还是引导？", "text": "但是有风险，然而有问题，不过要谨慎，风险不能忽视。", "def": "这段话**堆砌了转折词（但是/然而/问题/风险），但没有给出任何理由**。"}, {"id": "T3-G4-P1", "group": "G4_批判", "label": "P", "topic": "如何优化大规模矩阵乘法的并行计算策略？", "text": "我不认同无脑增加核心数的做法，因为核间通信开销会随之上升，最后可能比单核还慢。", "def": "这段话提出了**实质性的反对意见，并且给出了理由**。"}];
+let i = 0; const ans = {};
+const who = document.getElementById('who');
+who.value = localStorage.getItem('blind_who') || '';
+who.oninput = () => localStorage.setItem('blind_who', who.value);
+function render(){
+  const pb = document.getElementById('pb');
+  pb.style.width = (100*i/ITEMS.length) + '%';
+  const m = document.getElementById('main');
+  if(i >= ITEMS.length){ return finish(m); }
+  const it = ITEMS[i];
+  const prev = ans[it.id];
+  m.innerHTML = '<div class="card"><div class="row">第 ' + (i+1) + ' / ' + ITEMS.length +
+    ' 条 ｜ <span class="tag ' + it.label + '">被赋予标签：' + it.label + '</span>' +
+    '<span class="tag">' + it.group + '</span>课题：' + it.topic + '</div>' +
+    '<div class="q"><b>判据：</b>' + it.def + '</div>' +
+    '<div class="txt">' + it.text.replace(/</g,'&lt;') + '</div>' +
+    '<div class="btns">' +
+    '<button class="y" onclick="pick(1)">符合<span class="k">1</span></button>' +
+    '<button class="n" onclick="pick(0)">不符合<span class="k">2</span></button>' +
+    '<button class="u" onclick="pick(-1)">不确定<span class="k">3</span></button></div>' +
+    (prev!==undefined ? '<div class="row" style="margin-top:10px">本条已选：' +
+      ({'1':'符合','0':'不符合','-1':'不确定'}[String(prev)]) + '（可直接改选）</div>' : '') +
+    '</div>';
+}
+function pick(v){ ans[ITEMS[i].id] = v; i++; render(); }
+function back(){ if(i>0){ i--; render(); } }
+function finish(m){
+  const n = Object.keys(ans).length;
+  m.innerHTML = '<div class="card done"><h2 style="font-size:17px">已完成 ' + n + ' / ' +
+    ITEMS.length + ' 条</h2><p style="color:#65676b;font-size:13px">' +
+    (n<ITEMS.length ? '⚠️ 还有 ' + (ITEMS.length-n) + ' 条未标，可以点下面按钮回去补。' :
+     '✅ 全部标完。点"导出结果"保存文件，交给评分脚本。') + '</p>' +
+    '<div class="btns" style="margin-top:14px">' +
+    '<button onclick="i=0;render()">回到开头检查</button>' +
+    '<button class="y" onclick="submitCloud()">提交到云端</button>' +
+    '<button onclick="save()">导出文件</button></div>' +
+    '<div id="msg" class="row" style="margin-top:10px"></div>' +
+    '<textarea readonly>' + JSON.stringify({verifier: who.value||'', answers: ans}) + '</textarea></div>';
+}
+function payload(){
+  return {verifier: (who.value||'匿名'), answers: ans, n: Object.keys(ans).length,
+          items: ITEMS.length, submitted_at: new Date().toISOString()};
+}
+// 访问口令：从本页 URL 的 ?key= 里取（页面由网关 /blind?key=... 提供），
+// 提交时带 X-Access-Key 头——网关的写接口需要口令，不能开无鉴权写口。
+function accessKey(){
+  try{ return new URLSearchParams(location.search).get('key') || ''; }catch(e){ return ''; }
+}
+function submitCloud(){
+  const m = document.getElementById('msg');
+  const n = Object.keys(ans).length;
+  const k = accessKey();
+  if(!k){ m.innerHTML = '❌ 本页 URL 里没有 <code>?key=</code>，无法提交。<br>请用带口令的地址打开：<code>…/blind?key=你的口令</code>，或改用「导出文件」。'; return; }
+  if(n < ITEMS.length && !confirm('还有 ' + (ITEMS.length-n) + ' 条没标，仍要提交吗？')) return;
+  m.textContent = '提交中…';
+  fetch('/api/blind/submit', {method:'POST',
+                       headers:{'Content-Type':'application/json', 'X-Access-Key': k},
+                       body: JSON.stringify(payload())})
+    .then(r => r.json()).then(d => {
+      m.innerHTML = d.ok ? ('✅ 已提交到云端：<b>' + d.saved + '</b>（' + d.n + ' 条）')
+                         : ('❌ 提交失败：' + (d.detail||d.error||'未知'));
+    })
+    .catch(e => { m.innerHTML = '❌ 提交失败（' + e + '）。请改用「导出文件」把 JSON 发给组织者。'; });
+}
+function save(){
+  const out = payload();
+  const b = new Blob([JSON.stringify(out, null, 1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = 'blind_' + (who.value||'anon').replace(/[^\w\u4e00-\u9fa5]/g,'') + '.json';
+  a.click();
+}
+document.addEventListener('keydown', e => {
+  if(e.target.tagName === 'INPUT') return;
+  if(e.key === '1') pick(1); else if(e.key === '2') pick(0);
+  else if(e.key === '3') pick(-1); else if(e.key === 'ArrowLeft') back();
+});
+render();
+</script></body></html>

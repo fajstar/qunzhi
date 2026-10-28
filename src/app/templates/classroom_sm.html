@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SynthMind · 课堂模拟器主控制台</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- Chart.js 轻量图表 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- 渐变主题 & 自定义微调 -->
+  <style>
+    :root {
+      --grad-start: #6366F1;
+      --grad-end: #7C3AED;
+      --bg-soft: #F0F4F8;
+      --card-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+    * {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background: var(--bg-soft);
+      min-height: 100vh;
+      padding: 1.5rem;
+      margin: 0;
+    }
+    .app-wrapper {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid rgba(99, 102, 241, 0.15);
+    }
+    /* 顶部渐变条 */
+    .gradient-header {
+      background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+      padding: 1rem 2rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .gradient-header h1 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      letter-spacing: 0.5px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .badge-phase {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      padding: 0.35rem 1rem;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    /* 主控制台内容 */
+    .console-body {
+      padding: 2rem;
+    }
+    /* 状态条展示区 (可点击) */
+    .status-bar-area {
+      background: #f8faff;
+      border-radius: 16px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e9eef6;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .status-bar-area:hover {
+      background: #f0f2ff;
+      border-color: #c7d2fe;
+    }
+    .status-bar-area .status-label {
+      font-weight: 600;
+      color: #4338ca;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-bar-area .progress {
+      height: 10px;
+      border-radius: 20px;
+      background-color: #e9eef5;
+    }
+    .status-bar-area .progress-bar {
+      background: linear-gradient(90deg, #6366F1, #7C3AED);
+      border-radius: 20px;
+    }
+    .status-bar-area .status-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+    /* 卡片通用 */
+    .card {
+      border: none;
+      border-radius: 1.25rem;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.12);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(2px);
+      margin-bottom: 1.5rem;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(124, 58, 237, 0.18);
+    }
+    .card-header {
+      background: transparent;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(99,102,241,0.15);
+      padding: 1rem 1.25rem 0.5rem 1.25rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-body {
+      padding: 1.25rem;
+    }
+    /* 学生角色卡片 */
+    .student-card {
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 1rem;
+      padding: 1rem;
+      background: #f8faff;
+      height: 100%;
+    }
+    .student-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15);
+      border-color: #c7d2fe;
+    }
+    .student-card.selected {
+      border: 2px solid #6366F1 !important;
+      background: #f5f3ff;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+    }
+    .personality-badge {
+      font-size: 0.75rem;
+      padding: 0.35em 0.8em;
+      border-radius: 30px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      background: #eef2ff;
+      color: #4338ca;
+      transition: 0.2s;
+      cursor: pointer;
+      border: 1px solid #c7d2fe;
+      display: inline-block;
+      margin: 2px;
+    }
+    .personality-badge:hover {
+      background: #6366F1;
+      color: white;
+      border-color: #6366F1;
+    }
+    .progress {
+      height: 8px;
+      border-radius: 20px;
+      background-color: #e9eef5;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #4A90E2, #50E3C2);
+      border-radius: 20px;
+    }
+    /* 教学环节流程 */
+    .stage-indicator {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .step-pill {
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 30px;
+      padding: 0.4rem 1rem;
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 500;
+      font-size: 0.85rem;
+      border: 1px solid #e2e8f0;
+    }
+    .step-pill.active {
+      background: #6366F1;
+      color: white;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+      border-color: #6366F1;
+    }
+    /* 洞察面板 */
+    .gauge-value {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #6366F1, #7C3AED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .mood-bar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .mood-segment {
+      height: 2rem;
+      border-radius: 2rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      min-width: 60px;
+    }
+    /* 侧边栏模拟 */
+    .sidebar-gradient {
+      background: linear-gradient(145deg, #6366F1 0%, #7C3AED 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 1.5rem;
+      height: 100%;
+    }
+    .sidebar-gradient .brand {
+      font-weight: 700;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-item {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(4px);
+      border-radius: 16px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .sidebar-item .label {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .sidebar-item .value {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    /* 热力单元格 */
+    .heat-cell {
+      border-radius: 6px;
+      min-width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.1s;
+      background: #e2e8f0;
+    }
+    .heat-cell:hover {
+      transform: scale(1.1);
+      outline: 2px solid #7C3AED;
+    }
+    /* 时间线 */
+    .timeline-item {
+      cursor: pointer;
+      border-left: 3px solid #E2E8F0;
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .timeline-item.active {
+      border-left-color: #7C3AED;
+    }
+    /* 图表容器 */
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+    }
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .console-body {
+        padding: 1rem;
+      }
+      .gradient-header {
+        padding: 0.8rem 1rem;
+      }
+      .sidebar-gradient {
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app-wrapper">
+    <!-- 顶部渐变条 -->
+    <div class="gradient-header">
+      <h1>
+        <i class="bi bi-cpu"></i> SynthMind · 课堂模拟器
+      </h1>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge-phase"><i class="bi bi-activity me-1"></i> 实时模拟</span>
+        <span class="badge-phase"><i class="bi bi-people me-1"></i> 24 名学生</span>
+      </div>
+    </div>
+
+    <!-- 主控制台内容 -->
+    <div class="console-body">
+      <!-- 状态条展示区 (可点击) -->
+      <div class="status-bar-area" @click="toggleStatusDetail">
+        <div class="status-label">
+          <i class="bi bi-bar-chart-line"></i> 课堂整体参与度
+          <span class="badge bg-primary-subtle text-primary ms-2">{{ overallEngagement }}%</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" :style="{ width: overallEngagement + '%' }"></div>
+        </div>
+        <div class="status-meta">
+          <span><i class="bi bi-emoji-smile"></i> 积极 {{ positiveMood }}%</span>
+          <span><i class="bi bi-emoji-neutral"></i> 中性 {{ neutralMood }}%</span>
+          <span><i class="bi bi-emoji-frown"></i> 消极 {{ negativeMood }}%</span>
+          <span><i class="bi bi-lightning-charge"></i> 活跃度 {{ activeLevel }}</span>
+        </div>
+      </div>
+
+      <!-- 网格布局：左侧学生角色 + 右侧流程/洞察 -->
+      <div class="row g-4">
+        <!-- 左侧：AI学生角色管理 (模块2) -->
+        <div class="col-lg-4">
+          <div class="card h-100">
+            <div class="card-header">
+              <i class="bi bi-people-fill"></i> AI 学生角色
+            </div>
+            <div class="card-body">
+              <div class="row g-2">
+                <div v-for="(student, index) in students" :key="index" class="col-6">
+                  <div class="student-card" :class="{ selected: selectedStudent === index }" @click="selectStudent(index)">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <strong>{{ student.name }}</strong>
+                      <span class="badge" :style="{ background: student.color }">{{ student.initial }}</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                      <span v-for="trait in student.traits" :key="trait" class="personality-badge">{{ trait }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted">
+                      <span>理解度</span>
+                      <span>{{ student.understanding }}%</span>
+                    </div>
+                    <div class="progress mb-2">
+                      <div class="progress-bar" :style="{ width: student.understanding + '%' }"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted">
+                      <span>参与度</span>
+                      <span>{{ student.participation }}%</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" :style="{ width: student.participation + '%', background: 'linear-gradient(90deg, #7C3AED, #6366F1)' }"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：教学环节流程 + 洞察面板 + 响应模拟器 -->
+        <div class="col-lg-8">
+          <!-- 教学环节流程引擎 (模块3) -->
+          <div class="card">
+            <div class="card-header">
+              <i class="bi bi-diagram-3"></i> 教学环节流程
+            </div>
+            <div class="card-body">
+              <div class="stage-indicator">
+                <span v-for="(stage, idx) in stages" :key="idx" class="step-pill" :class="{ active: currentStage === idx }" @click="setStage(idx)">
+                  <i :class="stage.icon"></i> {{ stage.name }}
+                </span>
+              </div>
+              <div class="mt-3 d-flex align-items-center justify-content-between">
+                <div>
+                  <span class="text-muted">当前环节</span>
+                  <h5 class="mb-0 text-gradient">{{ stages[currentStage].name }}</h5>
+                </div>
+                <div class="text-end">
+                  <span class="badge bg-light text-dark me-2"><i class="bi bi-clock"></i> 剩余 {{ stageTime }}s</span>
+                  <button class="btn btn-sm btn-outline-primary" @click="advanceStage"><i class="bi bi-skip-forward"></i> 推进</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 课堂洞察面板 (模块4) + 响应模拟器 (模块5) 合并 -->
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header">
+                  <i class="bi bi-graph-up-arrow"></i> 课堂洞察
+                </div>
+                <div class="card-body">
+                  <div class="text-center mb-3">
+                    <span class="gauge-value">{{ focusScore }}</span>
+                    <span class="text-muted fs-6">/100 专注度</span>
+                  </div>
+                  <div class="mood-bar mb-3">
+                    <div class="mood-segment" style="background: #22c55e; flex: 0 0 auto; padding: 0 1rem;" @click="setMood('positive')">
+                      <i class="bi bi-emoji-smile me-1"></i>{{ positiveMood }}%
+                    </div>
+                    <div class="mood-segment" style="background: #eab308; flex: 0 0 auto; padding: 0 1rem;" @click="setMood('neutral')">
+                      <i class="bi bi-emoji-neutral me-1"></i>{{ neutralMood }}%
+                    </div>
+                    <div class="mood-segment" style="background: #ef4444; flex: 0 0 auto; padding: 0 1rem;" @click="setMood('negative')">
+                      <i class="bi bi-emoji-frown me-1"></i>{{ negativeMood }}%
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>理解度分布</span>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <div v-for="(seg, i) in understandingSegments" :key="i" class="heat-cell" :style="{ background: seg.color, color: '#fff' }" @click="selectSegment(i)">
+                      {{ seg.value }}%
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between">
+                    <span><i class="bi bi-chat-dots"></i> 提问 {{ questionCount }}</span>
+                    <span><i class="bi bi-hand-thumbs-up"></i> 响应 {{ responseCount }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <!-- AI学生响应模拟器 (模块5) 精简版 -->
+              <div class="card h-100">
+                <div class="card-header">
+                  <i class="bi bi-chat-square-text"></i> 响应模拟器
+                </div>
+                <div class="card-body">
+                  <div class="sidebar-item mb-3" style="background: #f1f5f9; border: none;">
+                    <div class="label">当前选中学生</div>
+                    <div class="value">{{ selectedStudentName }}</div>
+                  </div>
+                  <div class="d-flex gap-2 mb-3">
+                    <button class="btn btn-sm btn-primary" @click="simulateResponse('raise')"><i class="bi bi-hand-index"></i> 举手</button>
+                    <button class="btn btn-sm btn-outline-primary" @click="simulateResponse('answer')"><i class="bi bi-chat"></i> 回答</button>
+                    <button class="btn btn-sm btn-outline-secondary" @click="simulateResponse('question')"><i class="bi bi-question-circle"></i> 提问</button>
+                  </div>
+                  <div class="alert alert-light border small p-2 mb-0" style="background: #f8faff;">
+                    <i class="bi bi-activity me-1"></i> 最近响应: {{ lastResponse }}
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between small">
+                    <span><i class="bi bi-arrow-up-circle"></i> 主动 {{ proactiveCount }}</span>
+                    <span><i class="bi bi-arrow-down-circle"></i> 被动 {{ passiveCount }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 课堂智汇 (模块6) 部分：热力图 + 时间线 -->
+          <div class="card mt-4">
+            <div class="card-header">
+              <i class="bi bi-calendar-heart"></i> 课堂智汇 · 参与热力 & 时间线
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-7">
+                  <div class="d-flex flex-wrap gap-2">
+                    <div v-for="(cell, idx) in heatmap" :key="idx" class="heat-cell" :style="{ background: cell.color }" @click="toggleHeat(idx)">
+                      {{ cell.value }}
+                    </div>
+                  </div>
+                  <div class="mt-2 small text-muted">
+                    <i class="bi bi-info-circle"></i> 点击单元格切换参与状态
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div v-for="(item, idx) in timeline" :key="idx" class="timeline-item" :class="{ active: idx === activeTimeline }" @click="activeTimeline = idx">
+                    <div class="fw-semibold">{{ item.time }}</div>
+                    <div class="small text-muted">{{ item.event }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vue 3 应用 -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    createApp({
+      setup() {
+        // 状态数据
+        const overallEngagement = ref(78);
+        const positiveMood = ref(65);
+        const neutralMood = ref(25);
+        const negativeMood = ref(10);
+        const activeLevel = ref('高');
+        const focusScore = ref(82);
+        const questionCount = ref(12);
+        const responseCount = ref(34);
+        const selectedStudent = ref(0);
+        const currentStage = ref(0);
+        const stageTime = ref(120);
+        const lastResponse = ref('等待操作...');
+        const proactiveCount = ref(18);
+        const passiveCount = ref(9);
+        const activeTimeline = ref(0);
+
+        // 学生数据
+        const students = ref([
+          { name: '林小语', initial: '林', color: '#6366F1', traits: ['逻辑', '好奇'], understanding: 85, participation: 90 },
+          { name: '陈思睿', initial: '陈', color: '#7C3AED', traits: ['创意', '表达'], understanding: 78, participation: 82 },
+          { name: '王知行', initial: '王', color: '#4A90E2', traits: ['分析', '专注'], understanding: 92, participation: 75 },
+          { name: '赵一凡', initial: '赵', color: '#50E3C2', traits: ['协作', '耐心'], understanding: 70, participation: 88 },
+          { name: '李慕远', initial: '李', color: '#F5A623', traits: ['提问', '活跃'], understanding: 65, participation: 95 },
+          { name: '周晓雅', initial: '周', color: '#E94E77', traits: ['细致', '笔记'], understanding: 88, participation: 80 }
+        ]);
+
+        // 教学环节
+        const stages = ref([
+          { name: '导入', icon: 'bi bi-door-open' },
+          { name: '讲授', icon: 'bi bi-easel' },
+          { name: '互动', icon: 'bi bi-chat-dots' },
+          { name: '练习', icon: 'bi bi-pencil-square' },
+          { name: '总结', icon: 'bi bi-check-circle' }
+        ]);
+
+        // 理解度分段
+        const understandingSegments = ref([
+          { value: 20, color: '#ef4444' },
+          { value: 35, color: '#eab308' },
+          { value: 30, color: '#22c55e' },
+          { value: 15, color: '#3b82f6' }
+        ]);
+
+        // 热力图数据 (5x4)
+        const heatmap = ref(Array.from({ length: 20 }, (_, i) => ({
+          value: Math.floor(Math.random() * 100),
+          color: `hsl(${Math.floor(Math.random() * 60 + 200)}, 70%, ${Math.floor(Math.random() * 30 + 50)}%)`
+        })));
+
+        // 时间线
+        const timeline = ref([
+          { time: '09:00', event: '课堂开始 · 导入环节' },
+          { time: '09:05', event: 'AI学生提问' },
+          { time: '09:12', event: '小组讨论' },
+          { time: '09:20', event: '随堂测验' },
+          { time: '09:28', event: '总结反馈' }
+        ]);
+
+        // 计算属性
+        const selectedStudentName = computed(() => {
+          const s = students.value[selectedStudent.value];
+          return s ? s.name : '未选择';
+        });
+
+        // 方法
+        function toggleStatusDetail() {
+          overallEngagement.value = Math.floor(Math.random() * 30 + 60);
+          positiveMood.value = Math.floor(Math.random() * 20 + 50);
+          neutralMood.value = Math.floor(Math.random() * 20 + 10);
+          negativeMood.value = 100 - positiveMood.value - neutralMood.value;
+          if (negativeMood.value < 0) negativeMood.value = 5;
+        }
+
+        function selectStudent(index) {
+          selectedStudent.value = index;
+        }
+
+        function setStage(index) {
+          currentStage.value = index;
+          stageTime.value = 120 - index * 10;
+        }
+
+        function advanceStage() {
+          currentStage.value = (currentStage.value + 1) % stages.value.length;
+          stageTime.value = 120 - currentStage.value * 10;
+        }
+
+        function setMood(mood) {
+          if (mood === 'positive') {
+            positiveMood.value = Math.min(100, positiveMood.value + 5);
+            neutralMood.value = Math.max(0, neutralMood.value - 3);
+            negativeMood.value = Math.max(0, negativeMood.value - 2);
+          } else if (mood === 'neutral') {
+            neutralMood.value = Math.min(100, neutralMood.value + 5);
+            positiveMood.value = Math.max(0, positiveMood.value - 3);
+            negativeMood.value = Math.max(0, negativeMood.value - 2);
+          } else {
+            negativeMood.value = Math.min(100, negativeMood.value + 5);
+            positiveMood.value = Math.max(0, positiveMood.value - 3);
+            neutralMood.value = Math.max(0, neutralMood.value - 2);
+          }
+          // 归一化
+          const total = positiveMood.value + neutralMood.value + negativeMood.value;
+          positiveMood.value = Math.round(positiveMood.value / total * 100);
+          neutralMood.value = Math.round(neutralMood.value / total * 100);
+          negativeMood.value = 100 - positiveMood.value - neutralMood.value;
+        }
+
+        function selectSegment(index) {
+          understandingSegments.value[index].value = Math.floor(Math.random() * 40 + 10);
+        }
+
+        function simulateResponse(type) {
+          const student = students.value[selectedStudent.value];
+          if (type === 'raise') {
+            lastResponse.value = `${student.name} 举手`;
+            proactiveCount.value++;
+          } else if (type === 'answer') {
+            lastResponse.value = `${student.name} 回答正确`;
+            responseCount.value++;
+          } else {
+            lastResponse.value = `${student.name} 提出问题`;
+            questionCount.value++;
+          }
+        }
+
+        function toggleHeat(idx) {
+          heatmap.value[idx].value = Math.floor(Math.random() * 100);
+          heatmap.value[idx].color = `hsl(${Math.floor(Math.random() * 60 + 200)}, 70%, ${Math.floor(Math.random() * 30 + 50)}%)`;
+        }
+
+        return {
+          overallEngagement, positiveMood, neutralMood, negativeMood, activeLevel,
+          focusScore, questionCount, responseCount, selectedStudent, currentStage, stageTime,
+          lastResponse, proactiveCount, passiveCount, activeTimeline,
+          students, stages, understandingSegments, heatmap, timeline,
+          selectedStudentName,
+          toggleStatusDetail, selectStudent, setStage, advanceStage, setMood,
+          selectSegment, simulateResponse, toggleHeat
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

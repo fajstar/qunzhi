@@ -1,0 +1,33 @@
+﻿# 环境与凭据
+.env
+.env.local
+*.key
+*.pem
+cookies/
+.cnki_daily.json
+
+# 运行时
+data/
+logs/
+outputs/
+backups/
+sessions/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.tmp
+
+# 大文件（用 Release 附件代替）
+视频/
+*.mp4
+*.mov
+
+# 系统
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 站点构建产物（用 build_site_v2.py 重新生成）
+_site/

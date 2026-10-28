@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群智 · 科研决策预演智能体</title>
+<style>
+:root {
+  --primary:#2563EB; --primary-light:#DBEAFE; --accent:#0EA5E9;
+  --bg:#FAF6F0; --card:#FFFFFF; --card2:#F5F0E8;
+  --border:#EAE3D8; --text:#1F2937; --dim:#6B7280;
+  --green:#059669; --warn:#D97706; --danger:#DC2626;
+  --shadow:0 2px 8px rgba(31,41,55,.05);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Microsoft YaHei','PingFang SC',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 24px; background:var(--card); border-bottom:1px solid var(--border); box-shadow:var(--shadow); }
+.topbar h1 { font-size:18px; display:flex; align-items:center; gap:10px; color:var(--text); }
+.topbar h1 .logo-img { width:30px; height:30px; border-radius:6px; object-fit:cover; }
+.topbar h1 .logo { color:var(--primary); }
+.badge { font-size:11px; background:var(--primary-light); color:var(--primary); padding:3px 10px; border-radius:14px; font-weight:600; }
+.wrap { display:flex; min-height:calc(100vh - 57px); }
+.sidebar { width:200px; background:var(--card); border-right:1px solid var(--border); padding:14px 10px; }
+.nav-item { padding:10px 14px; border-radius:8px; margin-bottom:3px; cursor:pointer; color:var(--dim); font-size:13px; display:flex; align-items:center; gap:9px; transition:all .15s; }
+.nav-item:hover { background:var(--card2); color:var(--primary); }
+.nav-item.active { background:var(--primary-light); color:var(--primary); font-weight:700; }
+.main { flex:1; padding:22px 26px; max-width:1100px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:16px; box-shadow:var(--shadow); }
+.card h3 { font-size:15px; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.card h3 .ico { color:var(--primary); }
+label { font-size:12px; color:var(--dim); display:block; margin-bottom:5px; }
+input[type=text], textarea, select { width:100%; background:#fff; border:1px solid var(--border); color:var(--text); border-radius:8px; padding:10px 12px; font-size:13px; outline:none; transition:border .15s; }
+input:focus, textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-light); }
+textarea { min-height:50px; resize:vertical; }
+.btn { background:var(--primary); color:#fff; border:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; }
+.btn:hover { background:#1D4ED8; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--dim); }
+.btn-ghost:hover { color:var(--primary); border-color:var(--primary); }
+.row { display:flex; gap:16px; }
+.col { flex:1; }
+/* 团队 */
+.team-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.member { background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:10px; font-size:12px; }
+.member .m-head { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.member .avatar { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; background:var(--primary-light); color:var(--primary); font-weight:700; }
+.member .m-name { font-weight:700; font-size:13px; }
+.member .m-sub { color:var(--dim); font-size:11px; }
+.member .m-speech { margin-top:6px; font-size:12px; color:#374151; line-height:1.5; background:#fff; border:1px solid var(--border); border-radius:6px; padding:7px; min-height:44px; }
+/* 日志流 */
+.log-area { max-height:300px; overflow-y:auto; }
+.log-item { padding:6px 10px; border-left:3px solid var(--border); margin-bottom:4px; font-size:12px; line-height:1.5; border-radius:0 6px 6px 0; }
+.log-item.speech { border-left-color:var(--accent); background:var(--card2); }
+.log-item.collision { border-left-color:#D97706; background:#FEF3E2; box-shadow:inset 0 0 0 1px rgba(217,119,6,.25); }
+.log-item.system { border-left-color:var(--primary); color:var(--dim); }
+.log-item.round { border-left-color:var(--warn); font-weight:700; color:var(--warn); }
+.log-item.intervention { border-left-color:var(--danger); color:var(--danger); font-weight:600; }
+/* 报告 */
+.report-box { background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:14px; font-size:13px; line-height:1.8; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; max-width:100%; }
+/* V15 修复（2026-10-09）：报告里含知网等超长 URL（200+ 字符无空格），pre-wrap 不会断行会撑破容器。
+   overflow-wrap:anywhere + word-break 让长串强制折行；表格单元格同理。 */
+.report-box table, .report-box td, .report-box th { overflow-wrap:anywhere; word-break:break-word; }
+.report-box a { overflow-wrap:anywhere; word-break:break-all; }
+.report-box .one-line { font-size:15px; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.report-box .sec { margin-bottom:8px; }
+.report-box .sec b { color:var(--primary); }
+.dim-row { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.dim-box { background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:8px 12px; text-align:center; flex:1; min-width:90px; }
+.dim-box .v { font-size:20px; font-weight:800; color:var(--primary); }
+.dim-box .l { font-size:11px; color:var(--dim); margin-top:2px; }
+.loading { color:var(--primary); font-size:13px; animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.preset-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
+.preset-card { background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:12px; cursor:pointer; transition:all .15s; }
+.preset-card:hover { border-color:var(--primary); background:var(--primary-light); }
+.preset-card .t { font-size:13px; font-weight:600; margin-bottom:4px; }
+.preset-card .d { font-size:11px; color:var(--dim); }
+.hidden { display:none; }
+
+/* ===== 移动端适配（手机/平板） ===== */
+@media (max-width: 768px) {
+  .topbar { padding: 12px 16px; }
+  .topbar h1 { font-size: 16px; }
+  .topbar > div:last-child { display: none; }  /* 隐藏副标语，省空间 */
+  .wrap { flex-direction: column; }
+  /* 侧边栏 → 顶部横条导航 */
+  .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border);
+             padding: 8px 10px; display: flex; gap: 6px; overflow-x: auto; }
+  .sidebar .nav-item { flex: 1; justify-content: center; padding: 10px 8px;
+                       font-size: 13px; white-space: nowrap; }
+  .main { padding: 14px; }
+  /* 团队 3列 → 2列（手机更紧凑） */
+  .team-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .member .m-speech { min-height: 38px; font-size: 11px; }
+  /* 卡片间距压缩 */
+  .card { padding: 14px; margin-bottom: 12px; }
+  .card h3 { font-size: 14px; }
+  /* 输入框/按钮触屏友好 */
+  input[type=text], textarea, select { font-size: 15px; padding: 12px 12px; }
+  textarea { min-height: 60px; }
+  .btn { padding: 12px 18px; font-size: 14px; }
+  /* 预设卡片单列 */
+  .preset-grid { grid-template-columns: 1fr; }
+  .preset-card { padding: 14px; }
+  .preset-card .t { font-size: 14px; }
+  .preset-card .d { font-size: 12px; }
+  /* 评分块两列 */
+  .dim-box { min-width: 44%; }
+  /* 日志区更高（手机看更多） */
+  .log-area { max-height: 340px; }
+  .log-item { font-size: 13px; }
+  /* 报告字号稍大（手机阅读） */
+  .report-box { font-size: 14px; padding: 12px; }
+  /* 顶部操作行：按钮和输入不挤 */
+  #view-start .card > div:nth-child(4) { flex-wrap: wrap; }
+  #scenarioSelect { width: 100% !important; margin-bottom: 8px; }
+  #startBtn { width: 100%; }
+  .loading { width: 100%; margin-top: 6px; }
+}
+</style>
+<!-- ===== 群智 · 涌现 开场（v2：四幕叙事 + 用户主动进入）===== -->
+<style id="qz-intro-css">
+#qz-intro{position:fixed;inset:0;z-index:99999;background:#0A0F1A;overflow:hidden;
+  transition:opacity .5s ease;opacity:1;font-family:inherit}
+#qz-intro.qz-intro-out{opacity:0}
+#qz-intro-cv{position:absolute;inset:0;display:block}
+#qz-intro-vig{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at center,rgba(10,15,26,0) 34%,rgba(10,15,26,.92) 100%)}
+#qz-intro-fly{position:absolute;inset:0;pointer-events:none;z-index:5}
+#qz-intro-fly span{position:absolute;color:#8FB8FF;font-size:15px;transform:translate(-50%,-50%);
+  text-shadow:0 0 14px rgba(74,140,255,.95);opacity:0;
+  animation:qzFly 1.5s cubic-bezier(.4,0,.7,1) forwards}
+@keyframes qzFly{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+  18%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(.3) translateY(-40px)}
+}
+
+/* 四个场景层：默认隐藏，.qz-on 才出现 */
+#qz-intro-s1,#qz-intro-s2,#qz-intro-s3,#qz-intro-s4{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .7s ease;z-index:4}
+#qz-intro-s1.qz-on,#qz-intro-s2.qz-on,#qz-intro-s3.qz-on,#qz-intro-s4.qz-on{
+  opacity:1;pointer-events:auto}
+#qz-intro-s1{align-items:center;justify-content:center}
+
+/* ---- 第一幕 ---- */
+.qz-h1{color:rgba(255,248,240,.90);font-size:clamp(1.5rem,4.6vw,2.5rem);font-weight:300;
+  letter-spacing:.10em;text-shadow:0 0 26px rgba(46,107,230,.5);
+  animation:qzUp .9s ease .2s both}
+.qz-h2{margin-top:1.1rem;color:rgba(255,248,240,.62);font-size:clamp(.9rem,2.6vw,1.1rem);
+  letter-spacing:.06em;animation:qzUp .9s ease .5s both}
+@keyframes qzUp{from{opacity:0;transform:translateY(16px);filter:blur(6px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+.qz-row{margin-top:1.6rem;width:min(92vw,560px);animation:qzUp .9s ease .75s both}
+#qz-in{width:100%;box-sizing:border-box;background:rgba(255,248,240,.05);
+  border:1px solid rgba(255,248,240,.22);border-radius:999px;color:#FFF8F0;
+  padding:15px 22px;font-size:15px;font-family:inherit;outline:none;
+  transition:.25s;backdrop-filter:blur(6px);text-align:center}
+#qz-in::placeholder{color:rgba(255,248,240,.30)}
+#qz-in:focus{border-color:rgba(74,140,255,.85);background:rgba(46,107,230,.14);
+  box-shadow:0 0 0 4px rgba(46,107,230,.16)}
+.qz-samples{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px;
+  animation:qzUp .9s ease .95s both}
+.qz-samples button{background:rgba(255,248,240,.05);border:1px solid rgba(255,248,240,.30);
+  color:rgba(255,248,240,.88);font-size:13px;padding:7px 14px;border-radius:999px;
+  cursor:pointer;font-family:inherit;transition:.2s}
+.qz-samples button:hover{background:rgba(46,107,230,.28);border-color:rgba(74,140,255,.7);
+  color:#FFF8F0}
+#qz-go{margin-top:22px;background:linear-gradient(135deg,#2E6BE6,#4A8CFF);border:none;
+  color:#fff;font-size:15.5px;font-weight:500;letter-spacing:.06em;padding:14px 42px;
+  border-radius:999px;cursor:pointer;font-family:inherit;transition:.22s;
+  box-shadow:0 6px 26px rgba(46,107,230,.45);animation:qzUp .9s ease 1.15s both}
+#qz-go:hover:not(:disabled){transform:translateY(-2px);
+  box-shadow:0 10px 34px rgba(46,107,230,.62)}
+@keyframes qzShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}
+  40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+#qz-in.qz-shake{animation:qzShake .42s ease;border-color:rgba(255,150,120,.85)!important;
+  box-shadow:0 0 0 4px rgba(255,120,90,.16)!important}
+.qz-tip{margin-top:12px;color:rgba(255,248,240,.30);font-size:12px;
+  animation:qzUp .9s ease 1.3s both}
+
+/* ---- 第二幕 ---- */
+.qz-stage{color:rgba(255,248,240,.82);font-size:clamp(.95rem,2.8vw,1.2rem);
+  letter-spacing:.10em;margin-bottom:26px;
+  animation:qzUp .8s ease both}
+.qz-agents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;
+  width:min(92vw,620px)}
+@media(max-width:560px){.qz-agents{grid-template-columns:1fr}}
+.qz-agent{display:flex;flex-direction:column;gap:2px;text-align:left;
+  padding:11px 15px;border-radius:12px;border:1px solid rgba(255,248,240,.10);
+  background:rgba(255,248,240,.03);opacity:0;transform:translateY(10px);
+  transition:opacity .5s ease,transform .5s ease,border-color .5s ease,background .5s ease}
+.qz-agent.on{opacity:1;transform:none;border-color:rgba(74,140,255,.55);
+  background:rgba(46,107,230,.14);box-shadow:0 0 20px rgba(46,107,230,.22)}
+.qz-agent b{color:#FFF8F0;font-size:14px;font-weight:500;letter-spacing:.04em}
+.qz-agent span{color:rgba(255,248,240,.50);font-size:12px}
+
+/* ---- 第三幕 ---- */
+#qz-title{color:#FFF8F0;font-weight:300;font-size:clamp(1.9rem,7vw,4.2rem);
+  letter-spacing:.15em;white-space:nowrap;
+  text-shadow:0 0 26px rgba(46,107,230,.85),0 0 62px rgba(74,140,255,.55);
+  animation:qzTitleIn 1.05s ease .1s both, qzTitleSpace 1.4s cubic-bezier(.2,.9,.3,1) .1s both}
+@keyframes qzTitleIn{from{opacity:0;filter:blur(9px)}to{opacity:1;filter:blur(0)}}
+@keyframes qzTitleSpace{from{letter-spacing:.52em}to{letter-spacing:.15em}}
+#qz-sub{margin-top:1rem;color:rgba(255,248,240,.62);
+  font-size:clamp(.75rem,2.4vw,1rem);letter-spacing:.20em;
+  animation:qzTitleIn 1s ease .55s both}
+
+/* ---- 第四幕 ---- */
+#qz-enter{background:linear-gradient(135deg,#2E6BE6,#4A8CFF);border:none;color:#fff;
+  font-size:16px;font-weight:500;letter-spacing:.08em;padding:15px 46px;
+  border-radius:999px;cursor:pointer;font-family:inherit;
+  box-shadow:0 8px 32px rgba(46,107,230,.55);transition:.22s;
+  animation:qzUp .8s ease both}
+#qz-enter:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(46,107,230,.72)}
+
+/* ---- 跳过 / 不再显示 ---- */
+#qz-skip{position:absolute;right:20px;top:18px;z-index:6;
+  background:rgba(255,248,240,.06);border:1px solid rgba(255,248,240,.24);color:#FFF8F0;
+  font-size:13px;padding:8px 16px;border-radius:999px;cursor:pointer;
+  font-family:inherit;letter-spacing:.04em;transition:.2s;backdrop-filter:blur(4px)}
+#qz-skip:hover{background:rgba(46,107,230,.34);border-color:rgba(74,140,255,.75)}
+#qz-never{position:absolute;right:20px;bottom:16px;z-index:6;
+  background:none;border:none;color:rgba(255,248,240,.32);font-size:12px;
+  cursor:pointer;font-family:inherit;text-decoration:underline;
+  text-underline-offset:3px;padding:6px 8px}
+#qz-never:hover{color:rgba(255,248,240,.72)}
+@media (prefers-reduced-motion:reduce){#qz-intro{display:none!important}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1><img class="logo-img" src="static/logo.png" alt="群智" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';"> <span class="logo" style="display:none;">🧠</span> 群智 · 科研决策预演智能体 <span class="badge">V15</span></h1>
+  <div style="font-size:12px;color:var(--dim);">不是人问AI答，而是AI团队替你预演决策</div>
+</div>
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="nav-item active" data-view="start">🚀 发起预演</div>
+    <div class="nav-item" data-view="monitor">📡 讨论监控</div>
+    <div class="nav-item" data-view="result">📊 决策报告</div>
+  </aside>
+  <main class="main">
+    <!-- 发起预演 -->
+    <div id="view-start" class="view">
+      <div class="card">
+        <h3><span class="ico">🎯</span> 发起一场科研决策预演</h3>
+        <div style="margin-bottom:12px;"><label>输入你的课题</label>
+          <input type="text" id="topicInput" placeholder="例如：大学生使用AI写作业，学校该禁止还是引导？">
+        </div>
+        <div style="margin-bottom:12px;"><label>你的初步想法（可选，主教练会帮你挖认知盲区）</label>
+          <textarea id="thoughtInput" placeholder="例如：应该引导而非禁止，但不知道怎么落地"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+          <select id="scenarioSelect" style="width:160px;">
+            <option value="教研">教研决策</option>
+            <option value="科研">科研决策</option>
+            <option value="通用">通用预演</option>
+          </select>
+          <button class="btn" id="startBtn">🚀 启动预演</button>
+          <span class="loading hidden" id="startingMsg">主教练正在联网检索并组建AI团队...</span>
+        </div>
+        <!-- B9（2026-10-10）：网络资料白名单网开关。默认关闭 = 只用论文（与既有实验口径一致）；
+             勾上则本局启用规则白名单，只有政府/国际组织/高校/权威媒体以及有 DOI/学术域名的
+             网络源才会进池，其余在注入前剔除并在「检索漏斗」里列出明细。 -->
+        <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;padding:9px 11px;background:var(--bg);border-radius:8px;">
+          <input type="checkbox" id="allowWebChk" style="margin-top:3px;">
+          <label for="allowWebChk" style="cursor:pointer;font-size:12.5px;line-height:1.7;">
+            启用<b>网络资料白名单网</b>（本局）
+            <span style="color:var(--dim);">— 不勾＝只用学术文献（默认）；勾上后网络资料只有
+            <b>政府/国际组织/高校/权威媒体</b>或<b>有 DOI / 学术域名</b>的才进池，
+            其余在注入前剔除，明细见报告的「检索漏斗」</span>
+          </label>
+        </div>
+        <!-- V16.2 插件化：评审器由用户自己选 ——「老版本就是快，新版本需要更多时间，让用户自己选」。
+             清单从 /api/review/plugins 动态取（本页无写死的评审器），因此以后新增评审器不用改前端。 -->
+        <div style="margin-bottom:12px;padding:10px 12px;background:var(--bg);border-radius:8px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px;">🔍 评审器（自己选：要快，还是要准）</div>
+          <div id="pluginPicker" style="display:flex;flex-direction:column;gap:7px;">
+            <span style="font-size:12px;color:var(--dim);">正在读取可用评审器…</span>
+          </div>
+        </div>
+        <div id="startStatus" style="font-size:13px;color:var(--dim);"></div>
+      </div>
+      <div class="card">
+        <h3><span class="ico">📚</span> 预设教研课题（一键演示）</h3>
+        <div class="preset-grid" id="presetGrid"></div>
+      </div>
+    </div>
+
+    <!-- 讨论监控 -->
+    <div id="view-monitor" class="view hidden">
+      <div class="card">
+        <h3><span class="ico">📡</span> 实时讨论监控 <span id="sessionLabel" style="font-size:12px;color:var(--dim);"></span></h3>
+        <div class="log-area" id="logArea"><div style="color:var(--dim);font-size:13px;">启动预演后，这里实时显示AI团队讨论过程...</div></div>
+      </div>
+      <div class="card">
+        <h3><span class="ico">🎭</span> AI 团队</h3>
+        <div class="team-grid" id="teamGrid"></div>
+      </div>
+    </div>
+
+    <!-- 决策报告 -->
+    <div id="view-result" class="view hidden">
+      <div class="card">
+        <h3><span class="ico">📊</span> 决策预演报告</h3>
+        <div id="resultBox"><div style="color:var(--dim);font-size:13px;">讨论完成后，这里展示决策报告、评分与认知盲区。</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// API 地址：自动取当前页面域名（本地=127.0.0.1:5020，公网=同源隧道地址）
+// 体验版（nginx /staging/ 反代）：接口必须带上前缀，否则会打到线上
+var API = (window.location.pathname.indexOf("/staging") === 0)
+  ? (window.location.protocol + "//" + window.location.host + "/staging")
+  : (window.location.protocol + "//" + window.location.host);
+var ACCESS_KEY = "CHANGE_ME_ACCESS_KEY";   // 部署时改成与后端 QUNZHI_ACCESS_KEY 一致
+var currentSession = null;
+// v6 等待计数（V16.1）：报告 done 之后 v6 还要约 157 秒才回来，用它在 done 之后继续轮询
+var v6WaitTries = 0;
+
+// ====================================================================
+// 会话状态保持（V16.1，2026-10-11）
+// 用户原话：「我在页面刷新过后，我原有的报告也消失了，跟我们正常用的网页不一样」
+// —— 这句话是对的。会话本来就存在**服务端**（/api/sandbox/result/<session_id>），
+//    前端却把它只放在一个内存变量里，刷新必然丢。这不是"限制"，是缺陷。
+// 修法（按正常网页的做法）：
+//   ① 会话号写进 **URL**（`?session=...`）→ 可收藏、可分享、可前进后退；
+//   ② 同时写 **localStorage** → 下次直接打开首页也能自动回到上一局；
+//   ③ 记住**停在哪个标签页**，刷新后回到同一页。
+//   读取优先级：URL > localStorage（URL 更具体，且支持"把这个结果发给别人"）。
+// ====================================================================
+function rememberSession(sid){
+  if(!sid) return;
+  try{ localStorage.setItem("qz_last_session", sid); }catch(e){}
+  try{
+    var u = new URL(window.location.href);
+    u.searchParams.set("session", sid);      // 保留原有的 ?key=...
+    history.replaceState(null, "", u.toString());
+  }catch(e){}
+}
+function readSessionFromLocation(){
+  try{
+    var s = new URLSearchParams(window.location.search).get("session");
+    if(s) return s;
+  }catch(e){}
+  try{ return localStorage.getItem("qz_last_session"); }catch(e){ return null; }
+}
+function rememberView(v){
+  try{ localStorage.setItem("qz_last_view", v); }catch(e){}
+}
+function readViewFromLocation(){
+  try{ return localStorage.getItem("qz_last_view"); }catch(e){ return null; }
+}
+var eventSource = null;
+
+// 统一请求：自动带访问口令（用 query 参数，避免自定义 header 触发 CORS 预检）
+function apiFetch(url, opts){
+  opts = opts || {};
+  url = url + (url.indexOf("?") >= 0 ? "&" : "?") + "key=" + ACCESS_KEY;
+  return fetch(url, opts);
+}
+
+// Tab 切换
+document.querySelectorAll(".nav-item").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll(".nav-item").forEach(function(x){x.classList.remove("active");});
+    this.classList.add("active");
+    document.querySelectorAll(".view").forEach(function(x){x.classList.add("hidden");});
+    document.getElementById("view-" + this.dataset.view).classList.remove("hidden");
+    rememberView(this.dataset.view);      // V16.1：记住标签页，刷新后回到同一页
+  });
+});
+
+// 加载预设
+apiFetch(API + "/api/presets").then(function(r){return r.json();}).then(function(d){
+  var grid = document.getElementById("presetGrid");
+  (d.presets||[]).forEach(function(p){
+    var card = document.createElement("div");
+    card.className = "preset-card";
+    card.innerHTML = '<div class="t">🎯 ' + esc(p.title) + '</div><div class="d">' + esc(p.description) + '</div>';
+    card.onclick = function(){
+      document.getElementById("topicInput").value = p.title;
+      document.getElementById("thoughtInput").value = p.user_thought || "";
+      document.getElementById("scenarioSelect").value = p.scenario === "科研" ? "科研" : "教研";
+    };
+    grid.appendChild(card);
+  });
+});
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+// ====================================================================
+// 评审器选择器（V16.2 插件化）
+// 用户要求：「v3 的保留，就是给用户一个选择的机会，老版本就是快，新版本需要更多的时间，
+//           让用户自己选」。所以这里把每个插件的**耗时/成本/产出/已知缺陷**都摆出来，
+//           让用户在有信息的情况下取舍，而不是我们替他决定。
+// 清单**从后端动态取**（不写死）→ 以后加评审器不用动前端。
+// ====================================================================
+(function loadReviewPlugins(){
+  apiFetch(API + "/api/review/plugins").then(function(r){return r.json();}).then(function(d){
+    var box = document.getElementById("pluginPicker");
+    if(!box) return;
+    var ps = (d && d.plugins) || [];
+    if(!ps.length){
+      box.innerHTML = '<span style="font-size:12px;color:#DC2626;">⚠️ 没有可用评审器'
+        + (d && d.load_errors ? '（加载失败：' + esc(JSON.stringify(d.load_errors)) + '）' : '') + '</span>';
+      return;
+    }
+    var html = "";
+    ps.forEach(function(p){
+      var dis = p.available ? "" : " disabled";
+      html += '<label style="display:flex;gap:8px;align-items:flex-start;cursor:' + (p.available?"pointer":"not-allowed") + ';'
+            + (p.available ? "" : "opacity:.55;") + '">'
+            + '<input type="radio" name="reviewPlugin" value="' + esc(p.id) + '"'
+            + (p.default && p.available ? " checked" : "") + dis + ' style="margin-top:3px;">'
+            + '<span style="font-size:12.5px;line-height:1.6;">'
+            + '<b>' + esc(p.name) + '</b> '
+            + '<span style="color:var(--dim);">约 ' + esc(p.eta_sec) + ' 秒 ｜ 成本 ' + esc(p.cost)
+            + ' ｜ 产出：' + esc((p.metrics||[]).join('、')) + '</span>'
+            + '<br><span style="color:var(--dim);">' + esc(p.desc||'') + '</span>';
+      if(p.caveat){
+        html += '<br><span style="color:#D97706;">⚠️ 已知缺陷：' + esc(p.caveat) + '</span>';
+      }
+      if(!p.available){
+        html += '<br><span style="color:#DC2626;">✗ 当前不可用：' + esc(p.unavailable_reason||'原因未给出') + '</span>';
+      }
+      html += '</span></label>';
+    });
+    box.innerHTML = html;
+  }).catch(function(){
+    var box = document.getElementById("pluginPicker");
+    if(box) box.innerHTML = '<span style="font-size:12px;color:#DC2626;">⚠️ 评审器清单读取失败（不影响发起预演，将使用默认评审器）</span>';
+  });
+})();
+
+// 启动预演
+document.getElementById("startBtn").onclick = function(){
+  var topic = document.getElementById("topicInput").value.trim();
+  if(!topic){ alert("请输入课题"); return; }
+  var btn = this;
+  btn.disabled = true;
+  document.getElementById("startingMsg").classList.remove("hidden");
+  apiFetch(API + "/api/sandbox/start", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      topic: topic,
+      user_thought: document.getElementById("thoughtInput").value.trim(),
+      max_rounds: 3,
+      info_mode: "coach_search",
+      scenario: document.getElementById("scenarioSelect").value,
+      // B9：未勾选时显式传 false（"只用论文"），勾选才传 true（开白名单网）
+      allow_web: !!(document.getElementById("allowWebChk") || {}).checked,
+      // V16.2 插件化：把用户选的评审器一起发过去（老版快 / 新版准，由用户自己权衡）
+      review_plugin: (function(){
+        var el = document.querySelector('input[name="reviewPlugin"]:checked');
+        return el ? el.value : null;
+      })()
+    })})
+
+  .then(function(r){return r.json();})
+  .then(function(d){
+    document.getElementById("startingMsg").classList.add("hidden");
+    btn.disabled = false;
+    if(d.status === "started"){
+      currentSession = d.session_id;
+      // V16.1：会话号写进 URL + localStorage，刷新/收藏/分享都不丢
+      rememberSession(currentSession);
+      document.getElementById("startStatus").innerHTML = "✅ 预演已启动，切换到「讨论监控」查看实时过程";
+      document.getElementById("sessionLabel").textContent = "（" + d.session_id + "）";
+      document.getElementById("logArea").innerHTML = "";
+      initTeam();
+      connectStream(d.session_id);
+      document.querySelector('[data-view="monitor"]').click();
+    } else {
+      document.getElementById("startStatus").textContent = "⚠️ 启动失败：" + JSON.stringify(d);
+    }
+  })
+  .catch(function(e){
+    document.getElementById("startingMsg").classList.add("hidden");
+    btn.disabled = false;
+    document.getElementById("startStatus").textContent = "⚠️ 连接失败：" + e.message;
+  });
+};
+
+// 初始化团队展示
+function initTeam(){
+  var names = ["甲","乙","丙","丁","戊","己"];
+  var colors = ["#2563EB","#0EA5E9","#059669","#D97706","#DC2626","#7C3AED"];
+  var grid = document.getElementById("teamGrid");
+  grid.innerHTML = "";
+  names.forEach(function(n, i){
+    var m = document.createElement("div");
+    m.className = "member";
+    m.id = "member-" + n;
+    m.innerHTML = '<div class="m-head"><div class="avatar" style="background:' + colors[i] + '1A;color:' + colors[i] + ';">' + n + '</div>' +
+      '<div><div class="m-name">' + n + '</div><div class="m-sub">组建中...</div></div></div>' +
+      '<div class="m-speech">等待讨论...</div>';
+    grid.appendChild(m);
+  });
+}
+
+// SSE 讨论流
+// ====================================================================
+// 渲染一条讨论日志（V16.4 抽出）
+// 抽出来的原因：用户反馈「我的讨论记录怎么又不见了」——
+//   讨论日志**只在 SSE 实时流里渲染过**，刷新后没人重放。
+//   而 `session.logs` 一直是落盘的（50 条，字段与 SSE 完全一致）。
+//   数据没丢，只是**从来没人把它画出来**。现在 SSE 与重放共用这一个渲染器，
+//   避免"两处各写一份、改一处忘一处"。
+// ====================================================================
+function renderLogItem(item, opts){
+  opts = opts || {};
+  var area = document.getElementById("logArea");
+  if(!area || !item) return;
+  var div = document.createElement("div");
+  if(item.type === "speech"){
+    div.className = "log-item speech" + (item.collision ? " collision" : "");
+    div.innerHTML = '<b>' + esc(item.player||"") + '</b> · ' + esc(item.prototype_name||"") + ' · ' + esc(item.profession_name||"") + (item.collision ? ' <span style="color:#D97706;font-size:11px;">⚡跨学科碰撞</span>' : '') + '<br>' + esc(item.message||"");
+    var mem = document.getElementById("member-" + item.player);
+    if(mem && mem.querySelector(".m-speech")){
+      mem.querySelector(".m-speech").textContent = item.message || "";
+      mem.querySelector(".m-sub").textContent = (item.prototype_name||"") + " · " + (item.profession_name||"") + " · " + (item.value_name||"");
+    }
+  } else if(item.type === "round"){
+    div.className = "log-item round";
+    div.textContent = "📌 " + (item.message||"");
+  } else if(item.type === "system" && (item.message||"").indexOf("干预") >= 0){
+    div.className = "log-item intervention";
+    div.textContent = "🧠 " + (item.message||"");
+  } else {
+    div.className = "log-item system";
+    div.textContent = (item.message||"");
+  }
+  if(opts.append) area.appendChild(div);
+  else area.appendChild(div);
+  if(opts.scroll !== false) area.scrollTop = area.scrollHeight;
+}
+
+// 重放落盘的历史讨论记录（刷新/换设备/服务重启后都能看到全过程）
+function replayLogs(logs){
+  var area = document.getElementById("logArea");
+  if(!area || !logs || !logs.length) return false;
+  area.innerHTML = '<div class="log-item system" style="color:var(--dim);">📂 以下是从本地存档重放的**完整讨论记录**（'
+    + logs.length + ' 条）——刷新或重启都不会丢。</div>';
+  logs.forEach(function(it){ renderLogItem(it, {scroll:false}); });
+  area.scrollTop = 0;
+  return true;
+}
+
+function connectStream(sid){
+  if(eventSource) eventSource.close();
+  eventSource = new EventSource(API + "/api/sandbox/stream?session_id=" + encodeURIComponent(sid) + "&key=" + ACCESS_KEY);
+  eventSource.onmessage = function(ev){
+    try{
+      var item = JSON.parse(ev.data);
+      var area = document.getElementById("logArea");
+      if(item.type === "done"){
+        area.innerHTML += '<div class="log-item system">✅ 讨论完成，正在生成决策报告...</div>';
+        eventSource.close();
+        setTimeout(loadResult, 1500);
+        return;
+      }
+      renderLogItem(item);
+    }catch(e){}
+  };
+  // SSE 出错就关掉，绝不自动重连。
+  // 事故（2026-10-11 03:50）：会话已结束时服务端返回空流 → 浏览器 EventSource 每 3 秒
+  // 自动重连、无限刷请求。服务端已加 retry:1小时 兜底（对已打开页面也生效），
+  // 这里再补一道客户端防线。
+  eventSource.onerror = function(){
+    try{ eventSource.close(); }catch(e){}
+  };
+}
+
+// 加载结果
+function loadResult(){
+  if(!currentSession) return;
+  apiFetch(API + "/api/sandbox/result/" + currentSession).then(function(r){return r.json();}).then(function(d){
+    if(d.status !== "done"){ setTimeout(loadResult, 3000); return; }
+    // ---- V16.1：报告 done ≠ 全部算完 ----
+    // 评审 v6 是**独立线程**跑的，实测**报告出完后还要约 157 秒**才回来（锚点自检 12 次调用
+    // + 三模型分维，且 check_anchors 是串行的）。
+    // 原先这里一旦 done 就**停止轮询** → v6 永远轮不到 → 用户看到"没有 v6"，
+    // 再手动刷新又因为会话号没存而整页消失（2026-10-11 用户实测反馈）。
+    // 现在：done 之后若还没拿到 v6，继续轮询（最长约 5 分钟），并在页面上明确显示"计算中"。
+    if(!d.v6_review){
+      v6WaitTries = (v6WaitTries || 0) + 1;
+      if(v6WaitTries <= 100){                       // 100 × 3s ≈ 5 分钟
+        var _rb = document.getElementById("resultBox");
+        if(_rb && !_rb.innerHTML){
+          _rb.innerHTML = '<div style="padding:14px;background:var(--card2);border-radius:10px;font-size:13px;">' +
+            '⏳ 讨论已结束。<b>评审 v6 正在计算</b>（独立三家评委 + 锚点自检，约 2–3 分钟）：' +
+            '<span style="color:var(--dim);">已等待 ' + (v6WaitTries*3) + ' 秒…</span>' +
+            '<div style="font-size:11.5px;color:var(--dim);margin-top:6px;">这一页会自动刷新出结果，无需手动刷新。</div></div>';
+        }
+        setTimeout(loadResult, 3000); return;
+      }
+    }
+    var box = document.getElementById("resultBox");
+    var html = "";
+    // V16.1：若这份结果是**服务端从磁盘读回的历史记录**，明确告知用户
+    //（刷新能看到、但服务已重启过；不说明的话用户会以为"这是刚跑的"）
+    if(d.restored_from_disk){
+      html += '<div style="margin-bottom:10px;padding:9px 12px;background:#EFF6FF;border-left:3px solid var(--primary);border-radius:0 8px 8px 0;font-size:12.5px;">' +
+        '📂 <b>这是历史记录</b>（服务重启后从本地存档读回' + (d.saved_at ? '，保存于 ' + esc(d.saved_at) : '') + '）。' +
+        '<span style="color:var(--dim);">内容完整可查；重新发起一次预演请用上方「发起预演」。</span></div>';
+    }
+    // 复杂度分级
+    html += '<div style="font-size:13px;color:var(--dim);margin-bottom:8px;">课题复杂度：<b style="color:var(--warn);">' + esc(d.complexity_level||"中等") + '</b></div>';
+    // 人话化报告
+    if(d.human_report){
+      html += '<div class="report-box" style="margin-bottom:12px;"><div class="one-line">💡 决策建议</div><div style="white-space:pre-wrap;">' + esc(d.human_report) + '</div></div>';
+    }
+    // ---- V15 优化（2026-09-25）：主教练干预时间线（本局内逐轮决策）----
+    var ivs = d.interventions || [], sigs = d.round_signals || [];
+    if(ivs.length || sigs.length || d.intervention_timing){
+      html += '<div style="margin-bottom:12px;padding:12px 14px;background:var(--card2);border-radius:10px;border-left:4px solid var(--warn);">'
+        + '<div style="font-size:13px;font-weight:700;color:var(--warn);">🧠 主教练干预时间线'
+        + '<span style="font-weight:400;font-size:11px;color:var(--dim);">　本局内逐轮决策，共 ' + ivs.length + ' 次（时机：' + esc(d.intervention_timing || "per_round") + '）</span></div>';
+      if(!ivs.length){
+        html += '<div style="font-size:12px;color:var(--dim);margin-top:6px;line-height:1.7;">本局未触发干预（客观信号未达阈值）。'
+          + '<b>不干预本身也是可报告的结果</b>——旧机制下干预会在第 2 轮无条件注入。</div>';
+      }else{
+        ivs.forEach(function(v){
+          html += '<div style="margin-top:8px;padding:9px 11px;background:var(--card);border-radius:8px;">'
+            + '<div style="font-size:12.5px;font-weight:700;">第 ' + esc(v.round) + ' 轮 · ' + esc(v.action) + '</div>'
+            + '<div style="font-size:12px;color:var(--dim);line-height:1.75;margin-top:3px;">'
+            + '<b>触发依据：</b>' + esc(v.trigger || "-") + '<br>'
+            + '<b>讨论原文：</b>' + esc(v.evidence || "-") + '<br>'
+            + '<b>作用对象：</b>' + esc((v.target || []).join("、") || "全体") + '</div></div>';
+        });
+      }
+      if(sigs.length){
+        html += '<details style="margin-top:9px;"><summary style="font-size:12px;color:var(--primary);cursor:pointer;font-weight:600;">📈 每轮客观信号（本地计算，可复现）</summary>'
+          + '<div style="margin-top:6px;overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">'
+          + '<thead><tr>' + ['轮次','观点重复率','跑题度','张力','未补证断言','引用编号','触发的信号']
+              .map(function(h){return '<th style="text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;">' + h + '</th>';}).join("")
+          + '</tr></thead><tbody>';
+        sigs.forEach(function(s){
+          var trig = (s.triggers || []).join("、") || "无";
+          html += '<tr>'
+            + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">第' + esc(s.round) + '轮</td>'
+            + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">' + esc(s.repeat_rate) + '</td>'
+            + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">' + esc(s.off_topic) + '</td>'
+            + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">' + esc(s.tension) + '</td>'
+            + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">' + esc(s.unsupported_claims) + '</td>'
+            + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">' + esc(s.cited_count) + '</td>'
+            + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:' + ((s.triggers||[]).length ? 'var(--warn)' : 'var(--dim)') + ';">' + esc(trig) + '</td>'
+            + '</tr>';
+        });
+        html += '</tbody></table></div>'
+          + '<div style="font-size:11.5px;color:var(--dim);margin-top:6px;">信号全部在本地按固定阈值计算（重复率≥0.55、跑题度≥0.65、张力≤0.15、未补证≥3 条、本轮无引用），不调用模型判断"要不要干预"。</div>'
+          + '</details>';
+      }
+      html += '</div>';
+    }
+    // ================================================================
+    // 评审 v6（**主读数**，2026-10-11 起取代 1–10 分那把尺子）
+    // 依据：你自己的实验报告 01_v6实验结果_人话版.md §七 —— v3 的 1–10 分在同一批 18 对上
+    //       只挑对 8/18 = 44%，**低于瞎猜**；归因是"**尺子没有刻度**"（分数全挤在 6.4–7.2，
+    //       跨度 0.8 分，而"判定有差别"的门槛是 0.5 分）。v6 改成成对强制选择，
+    //       三家 18/17/17 全达标、两轮一致。
+    // 展示纪律（v6 预注册）：**锚点未过就一个分数都不给**；每条判断必须带原文证据。
+    // ================================================================
+    var v6 = d.v6_review;
+    // V16.2：**插件层的失败要显眼**。
+    // 用户选了一个不可用的评审器、或评审器跑挂了 —— 都必须在结果页顶部说清楚，
+    // 否则用户只会看到"没有读数"，不知道是没选、不可用、还是跑挂了（三者长得一样）。
+    if(d.review_error){
+      html += '<div style="margin:12px 0 6px;padding:10px 12px;background:#FEF2F2;border-left:3px solid #DC2626;border-radius:0 8px 8px 0;font-size:12.5px;">' +
+        '<b style="color:#DC2626;">⚠️ 评审未产出读数</b><br>' + esc(String(d.review_error)) + '</div>';
+    }
+    // V16.2：**评委齐不齐** —— 三家独立家族是 v6 防止同源自评的立身之本，少一家等于设计没成立。
+    // 实测事故：某局 glm 在分维诊断缺席，界面上只是评委列少一个名字，极易被忽略。
+    if(v6 && v6.reviewer_status && v6.reviewer_status.complete === false){
+      var _rs = v6.reviewer_status;
+      html += '<div style="margin:12px 0 6px;padding:10px 12px;background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 8px 8px 0;font-size:12.5px;">' +
+        '<b style="color:#D97706;">⚠️ 评委不齐：应到 ' + esc(_rs.n_expected) + " 家，实到 " + esc(_rs.n_contributed) + ' 家</b>' +
+        '<br>缺席：<b>' + esc((_rs.missing_dims||[]).join("、")) + '</b>（' + esc((_rs.expected||[]).join("、")) + '）' +
+        '<div style="color:var(--dim);margin-top:4px;line-height:1.6;">' +
+        '三档取自「多家评委的众数」，**评委数减少会让众数更容易被单个模型带偏**。' +
+        '本次读数**仍可用**，但请把它当作"评委不全"的结果看待——具体缺席原因见下方「不可用」一行。</div></div>';
+    }
+    if(v6){
+      html += '<div style="margin:14px 0 6px;font-size:14px;font-weight:700;color:var(--primary);">🧪 评审 v6（独立三家 · 成对判定 + 分维三档）</div>';
+      // 锚点自检 —— 这是"尺子本身先体检"的结果，必须先展示
+      var ap = v6.anchors_passed;
+      if(ap === true){
+        html += '<div style="margin-bottom:8px;padding:8px 11px;background:#ECFDF5;border-left:3px solid var(--green);border-radius:0 8px 8px 0;font-size:12.5px;">' +
+          '<b style="color:var(--green);">✅ 锚点自检通过</b><span style="color:var(--dim);"> —— 评审器先做了"尺子体检"（完整报告应胜过删掉六成的同一份；同一份应判无差别），通过后才出下面的读数。</span></div>';
+      } else if(ap === false){
+        html += '<div style="margin-bottom:8px;padding:8px 11px;background:#FEF2F2;border-left:3px solid #DC2626;border-radius:0 8px 8px 0;font-size:12.5px;">' +
+          '<b style="color:#DC2626;">❌ 锚点自检未通过 → 本次不展示任何分数</b><span style="color:var(--dim);">（评审器没通过体检，按规则不出读数）</span></div>';
+      } else {
+        html += '<div style="margin-bottom:8px;padding:8px 11px;background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 8px 8px 0;font-size:12.5px;">' +
+          '<b style="color:#D97706;">⚠️ 锚点自检未能运行 → 本次不展示任何分数</b><span style="color:var(--dim);">（材料或模型不可用）</span></div>';
+      }
+      if(v6.errors && v6.errors.length){
+        html += '<div style="margin-bottom:8px;font-size:11.5px;color:var(--dim);line-height:1.6;">' +
+          v6.errors.map(function(e){ return '· ' + esc(String(e)); }).join('<br>') + '</div>';
+      }
+      // 分维：**三档，不求和**（v6 原则②：不许拿总分当门面）
+      var dims = v6.dimensions || {};
+      var dimKeys = Object.keys(dims);
+      if(!v6.scores_hidden && dimKeys.length){
+        var LV = {"强":"#059669","中":"#D97706","弱":"#DC2626","无依据":"#6B7280"};
+        html += '<div style="margin-bottom:8px;">';
+        dimKeys.forEach(function(k){
+          var v = dims[k] || {}, lv = v.level || "无依据";
+          // V16.3 修复：**必须显示维度名**。
+          // 用户原话：「这个强中弱，是什么强，实用性嘛，还是啥」
+          // —— 后端一直返回着 name（"是否答到课题核心"等），但前端只渲染了编号 ①②③，
+          //    于是读者看到"① 强"完全不知道在说什么，档位等于没有意义。
+          var _dn = v.name || "";
+          html += '<div style="padding:7px 0;border-bottom:1px dashed var(--border);">' +
+            '<span style="font-size:12.5px;font-weight:700;">' + esc(k) + ' ' + esc(_dn) + '</span> ' +
+            '<span style="font-size:12px;font-weight:700;color:' + (LV[lv] || '#6B7280') + ';">' + esc(lv) + '</span>' +
+            (v.votes ? '<span style="font-size:11px;color:var(--dim);">（' + esc(String(v.votes)) + '）</span>' : '') +
+            (v.quote ? '<div style="font-size:11.5px;color:var(--dim);line-height:1.6;margin-top:2px;">原文：' + esc(v.quote) + '</div>' : '') +
+            '</div>';
+        });
+        html += '</div>';
+        html += '<div style="font-size:11.5px;color:var(--dim);margin-bottom:10px;">↑ 三档取自三家评委的<b>众数</b>，不做加权求和 —— 避免「总分好看但每一维都平庸」。</div>';
+        // V16.2：**把档位标准摆出来**。用户原话：「然后就是什么强，你没有表明」
+        // —— 只显示"强"而不给标准，读者无法复核，档位就退化成了主观标签。
+        // 标准与后端 prompt 用的是同一份（后端随结果返回 tier_rubric），不是前端另写一套。
+        var _rb = v6.tier_rubric;
+        if(_rb){
+          html += '<details style="margin-bottom:10px;background:var(--card2);border-radius:8px;padding:9px 12px;">' +
+            '<summary style="font-size:12px;color:var(--primary);cursor:pointer;font-weight:600;">📏 三档是怎么判的？（点开看标准）</summary>' +
+            '<div style="margin-top:8px;font-size:12px;line-height:1.8;">';
+          ["强","中","弱","无依据"].forEach(function(k){
+            if(!_rb[k]) return;
+            var c = {"强":"#059669","中":"#D97706","弱":"#DC2626","无依据":"#6B7280"}[k];
+            html += '<div style="margin-bottom:5px;"><b style="color:' + c + ';">' + esc(k) + '</b>＝' + esc(_rb[k]) + '</div>';
+          });
+          html += '<div style="color:var(--dim);margin-top:6px;">※ 程序还会做一道校验：'
+               + '<b>判为强/中/弱但引不出原文的，一律降为「无依据」</b>'
+               + '—— 档位若可以不带证据，它就退化成了一个主观标签，那正是我们把 1–10 分换掉的原因。</div>';
+          html += '</div></details>';
+        }
+        if(v6.today){
+          html += '<div style="font-size:11.5px;color:var(--dim);margin-bottom:10px;">评审基准日期：' + esc(v6.today)
+               + '（评委按此判断年份是否可疑——不告知日期会让它们把当前年份误报成"未来"）</div>';
+        }
+      }
+      // 风险栏
+      var risks = (v6.risk && v6.risk.items) || [];
+      if(!v6.scores_hidden && risks.length){
+        html += '<details open style="margin-bottom:10px;background:var(--card2);border-radius:8px;padding:10px 12px;">' +
+          '<summary style="font-size:12.5px;color:#DC2626;cursor:pointer;font-weight:700;">⚠️ 风险栏（' + risks.length + ' 条 · 每条带原文证据）</summary><div style="margin-top:8px;">';
+        risks.forEach(function(r, i){
+          html += '<div style="padding:8px 0;border-bottom:1px dashed var(--border);">' +
+            '<div style="font-size:12.5px;line-height:1.7;"><b>' + (i+1) + '.</b> ' + esc(r.risk || '') + '</div>' +
+            (r.if_happens ? '<div style="font-size:11.5px;color:#DC2626;line-height:1.6;margin-top:3px;">↳ 会发生什么：' + esc(r.if_happens) + '</div>' : '') +
+            (r.evidence ? '<div style="font-size:11.5px;color:var(--dim);line-height:1.6;margin-top:3px;">原文：' + esc(r.evidence) + '</div>' : '') +
+            '</div>';
+        });
+        html += '</div></details>';
+      }
+      // 成对判定（有基线时才是主读数）
+      if(v6.pairwise){
+        var pw = v6.pairwise;
+        html += '<div style="margin-bottom:8px;padding:9px 11px;background:var(--card2);border-radius:8px;font-size:12.5px;">' +
+          '<b>成对强制选择（相对基线）</b>：' + esc(pw.verdict || '') +
+          ' ｜ <span style="color:var(--dim);">胜 ' + (pw.win||0) + ' / 平 ' + (pw.tie||0) + ' / 负 ' + (pw.loss||0) + '（' + (pw.n||0) + ' 家投票）</span></div>';
+      } else if(v6.pairwise_skipped){
+        html += '<div style="margin-bottom:8px;font-size:11.5px;color:var(--dim);">· ' + esc(v6.pairwise_skipped.reason || '') + '</div>';
+      }
+      // 评委可用性（**不回落**：不可用就如实列出来）
+      var un = v6.unavailable || [];
+      html += '<div style="font-size:11.5px;color:var(--dim);line-height:1.6;margin-bottom:10px;">' +
+        '评委：' + esc((v6.models_used || []).join('、') || '（无）') +
+        (un.length ? '<br>⚠️ 不可用：' + esc(un.map(function(u){ return u.model + '（' + u.stage + '）'; }).join('、')) : '') +
+        (v6.same_family_warning ? '<br>⚠️ 评审与生成同源，分数仅供参考' : '') + '</div>';
+    } else {
+      html += '<div style="margin:14px 0 6px;font-size:13px;color:var(--dim);">🧪 评审 v6：本次未生成（约需 2–3 分钟，稍后刷新可看）</div>';
+    }
+    // ----------------------------------------------------------------
+    // 旧尺子 v3（1–10 分）——**已下线**，仅作留档折叠展示
+    // 为什么保留：① 它有回归测试守着，不能删端点；② 历史会话的可复现性需要它。
+    // 为什么折叠：它已被证明"没有刻度"（同一批 18 对只挑对 8/18，低于瞎猜），
+    //            继续把 1–10 分摆在最显眼处会误导读者。
+    // ----------------------------------------------------------------
+    var vr = d.v3_review || {};
+    if(vr["综合评分"]){
+      html += '<details style="margin-bottom:10px;background:var(--card2);border-radius:8px;padding:10px 12px;">' +
+        '<summary style="font-size:12.5px;color:var(--dim);cursor:pointer;font-weight:600;">🗄️ 旧尺子留档：v3 五维 1–10 分（**已下线**，仅存档）</summary>' +
+        '<div style="margin-top:8px;font-size:11.5px;color:var(--dim);line-height:1.7;">' +
+        '这套分数已被实验证伪：同一批 18 对上只挑对 8/18（44%），低于瞎猜。归因是<b>尺子没有刻度</b>——' +
+        '所有报告分数挤在 6.4–7.2、跨度仅 0.8 分，而"判定有差别"的门槛是 0.5 分。' +
+        '主读数请以上方 <b>评审 v6</b> 为准。<br><br>' +
+        '综合评分：<b>' + esc(vr["综合评分"]) + '</b>（旧口径，勿用于结论）</div>';
+      // 原文依据仍然可查（这是 v3 里唯一有价值的部分，保留可核查性）
+      html += '<details style="margin-top:8px;"><summary style="font-size:11.5px;color:var(--dim);cursor:pointer;">查看旧五维分数与原文依据</summary><div style="margin-top:6px;">';
+      ["深度","广度","涌现度","实用性","分歧质量"].forEach(function(k){
+        var s = (vr.scores || {})[k];
+        if(!s) return;
+        html += '<div style="padding:6px 0;border-bottom:1px dashed var(--border);">' +
+          '<div style="font-size:12px;font-weight:700;">' + esc(k) + ' <span style="color:var(--dim);">' + esc(s.score) + ' 分</span>' +
+          '<span style="font-size:11px;color:var(--dim);font-weight:400;"> ｜ 置信度 ' + esc(s.confidence || '-') + '/10 ｜ ' + esc(s.role || '') + '</span></div>' +
+          '<div style="font-size:11.5px;color:var(--dim);line-height:1.65;margin-top:3px;">' + esc(s.evidence || '（未提供）') + '</div></div>';
+      });
+      html += '</div></details>';
+      // 审计五维 + 方法论四维（同为 1–10 旧口径，一并留档；**不再作为主读数展示**）
+      var au = vr.audit_scores || {}, me = vr.methodology_scores || {};
+      var auKeys = Object.keys(au), meKeys = Object.keys(me);
+      if(auKeys.length || meKeys.length){
+        html += '<details style="margin-top:8px;"><summary style="font-size:11.5px;color:var(--dim);cursor:pointer;">查看旧「内容可靠性 / 方法论审计」分数（同为 1–10 旧口径）</summary><div style="margin-top:6px;">';
+        if(auKeys.length){
+          html += '<div style="font-size:11.5px;font-weight:700;margin-bottom:4px;">内容可靠性五维</div>';
+          auKeys.forEach(function(k){
+            var s = au[k];
+            html += '<div style="font-size:11.5px;color:var(--dim);line-height:1.7;">· ' + esc(k) + '：<b style="color:var(--text);">' + esc(s.score) + '</b>（置信度' + esc(s.confidence || '-') + '）' + (s.evidence ? ' — ' + esc(String(s.evidence).slice(0, 90)) : '') + '</div>';
+          });
+        }
+        if(meKeys.length){
+          html += '<div style="font-size:11.5px;font-weight:700;margin:8px 0 4px;">方法论审计</div>';
+          meKeys.forEach(function(k){
+            var s = me[k];
+            html += '<div style="font-size:11.5px;color:var(--dim);line-height:1.7;">· ' + esc(k) + '：<b style="color:var(--text);">' + esc(s.score) + '</b>' + (s.evidence ? ' — ' + esc(String(s.evidence).slice(0, 90)) : '') + '</div>';
+          });
+        }
+        html += '</div></details>';
+      }
+      html += '</details>';
+    }
+    // 原始报告
+    if(d.report){
+      // V15 优化（2026-09-25）：报告正文末尾的 Markdown 参考文献表由代码追加，
+      // 前端已用结构化表格单独渲染（见下方「引用核验 + 参考文献」），
+      // 这里截断，避免同一份文献清单以纯文本形式重复出现、并把超长 URL 撑破容器。
+      var repText = String(d.report);
+      var cut = repText.indexOf("### 参考文献");
+      var hadRefBlock = cut >= 0;
+      if (hadRefBlock) repText = repText.slice(0, cut).replace(/\s+$/, "");
+      html += '<div class="report-box"><b style="color:var(--primary);">📄 完整讨论报告</b><br>' + esc(repText) +
+        (hadRefBlock ? '<div style="margin-top:8px;font-size:11.5px;color:var(--dim);">📚 参考文献见下方「引用核验」表格（由系统生成，未经模型改写）</div>' : '') +
+        '</div>';
+    }
+    // ---- V15 优化（2026-09-25）：引用核验 + 参考文献（由代码生成，非模型生成）----
+    var cc = d.citation_check || null, refs = d.references || [];
+    if(cc || refs.length){
+      var bColor = "#059669", bText = (cc && cc.verdict) ? cc.verdict : "引用已核验";
+      if(cc && cc.phantom_count > 0){ bColor = "#DC2626"; bText = "⚠️ 检出引用了不存在的编号（疑似编造）"; }
+      else if(cc && cc.unsupported_count > 0){ bColor = "#D97706"; bText = "有 " + cc.unsupported_count + " 处含数字/年份的断言未标注出处"; }
+      html += '<div style="margin-top:12px;padding:12px 14px;background:var(--card2);border-radius:10px;border-left:4px solid ' + bColor + ';">'
+        + '<div style="font-size:13px;font-weight:700;color:' + bColor + ';">🔗 引用核验：' + esc(bText) + '</div>';
+      if(cc){
+        html += '<div style="font-size:12px;color:var(--dim);margin-top:6px;line-height:1.8;">'
+          + '有出处 <b style="color:var(--text);">' + esc(cc.cited_count || 0) + '</b> 处　｜　'
+          + '引用了不存在的编号 <b style="color:' + ((cc.phantom_count || 0) > 0 ? '#DC2626' : 'var(--text)') + ';">' + esc(cc.phantom_count || 0) + '</b> 处　｜　'
+          + '未标注出处的断言 <b style="color:var(--text);">' + esc(cc.unsupported_count || 0) + '</b> 处　｜　'
+          + '信息池 ' + esc(cc.pool_size || 0) + ' 篇</div>';
+        if((cc.phantom || []).length){
+          html += '<div style="font-size:12px;color:#DC2626;margin-top:5px;line-height:1.7;">⚠️ 报告中出现了信息池里不存在的编号：'
+            + esc(cc.phantom.join("、")) + '。系统判定为疑似编造引用，请以下方参考文献表为准。</div>';
+        }
+        if((cc.unsourced_numbers || []).length){
+          html += '<details open style="margin-top:6px;"><summary style="font-size:12px;color:#DC2626;cursor:pointer;font-weight:600;">⚠️ 无出处数字（疑似幻觉，' + cc.unsourced_numbers.length + ' 处）</summary>'
+            + '<div style="margin-top:4px;font-size:12px;color:var(--dim);line-height:1.75;">'
+            + '以下句子含具体数字并声称有外部依据，但在本轮信息池中<b style="color:#DC2626;">查无实据</b>，请勿直接采信：<br>'
+            + (cc.unsourced_numbers || []).map(function(x){ return '· ' + esc(x); }).join('<br>') + '</div></details>';
+        }
+        if((cc.unsupported || []).length){
+          html += '<details style="margin-top:6px;"><summary style="font-size:12px;color:var(--dim);cursor:pointer;">查看未标注出处的断言（' + cc.unsupported.length + ' 条）</summary>'
+            + '<div style="margin-top:4px;font-size:12px;color:var(--dim);line-height:1.75;">'
+            + (cc.unsupported || []).map(function(x){ return '· ' + esc(x); }).join('<br>') + '</div></details>';
+        }
+      }
+      if(cc){
+        var ss = (d.v15_meta && d.v15_meta.search && d.v15_meta.search.source_status) || null;
+        if(ss && Object.keys(ss).length){
+          var parts = [];
+          Object.keys(ss).forEach(function(k){
+            var v = ss[k] || {}, n = v.count || 0;
+            var tag = n > 0 ? ('✅ ' + n + ' 条') : (v.error ? ('⚠️ ' + String(v.error).slice(0, 26)) : '— 无结果');
+            parts.push('<span style="white-space:nowrap;">' + esc(k) + '：' + esc(tag) + '</span>');
+          });
+          html += '<div style="margin-top:6px;font-size:11.5px;color:var(--dim);line-height:1.9;">' +
+            '<b>检索来源台账</b>（区分"没有数据"与"被限速/超时"）：' + parts.join('　') + '</div>';
+        }
+        // B9（2026-10-10）：检索漏斗——把"检索→去重→三无→类型过滤→撤稿→注入"逐级计数摆出来。
+        // 开了网络资料白名单网时，这一段还会带上"网络源 N 条：放行 可信a/学术b，剔除 c"。
+        var fu = (d.v15_meta && d.v15_meta.search && d.v15_meta.search.funnel) || null;
+        if(fu && fu.funnel_text){
+          html += '<details style="margin-top:6px;"><summary style="font-size:11.5px;color:var(--dim);cursor:pointer;">'
+            + '🔎 检索漏斗（逐级计数，可回放）</summary>'
+            + '<div style="margin-top:5px;font-size:11.5px;color:var(--dim);line-height:1.9;overflow-wrap:anywhere;">'
+            + esc(fu.funnel_text) + '</div></details>';
+        }
+      }
+      if(refs.length){
+        // V15 修复（2026-10-09）：按来源性质拆成两块——
+        // 参考文献只收学术来源（期刊/会议/出版机构/DOI），网页新闻/自媒体单列，
+        // 避免"今日头条"这类内容被当成参考文献展示。
+        var acRefs = refs.filter(function(r){ return (r.kind || '') === 'academic'; });
+        var webRefs = refs.filter(function(r){ return (r.kind || '') !== 'academic'; });
+        if(acRefs.length){
+          html += '<details open style="margin-top:9px;"><summary style="font-size:12.5px;color:var(--primary);cursor:pointer;font-weight:600;">📚 参考文献（' + acRefs.length + ' 篇，学术来源）</summary>'
+            + '<div style="margin-top:8px;overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;">'
+            + '<thead><tr>' + ['编号','标题','作者','来源','级别','年份','被引','链接']
+                .map(function(h){return '<th style="text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;">' + h + '</th>';}).join("")
+            + '</tr></thead><tbody>';
+          acRefs.forEach(function(r){
+            // 级别：CSSCI / 北大核心 / CSSCI扩展 / 国际 Q1… —— 依据公开名录与 SJR 分区
+            var lv = r.journal_level || '';
+            if(!lv) lv = (r.journal_tier === 1 ? 'CSSCI' : r.journal_tier === 2 ? '北大核心' : r.journal_tier === 11 ? 'CSSCI扩展' : '—');
+            var lvColor = (lv.indexOf('CSSCI') === 0) ? '#059669' : (lv === '北大核心' ? '#2563EB' : (lv.indexOf('国际 Q1') === 0 || lv.indexOf('国际 Q2') === 0 ? '#7C3AED' : 'var(--dim)'));
+            html += '<tr>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:var(--primary);font-weight:700;white-space:nowrap;">' + esc(r.ref_no || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);overflow-wrap:anywhere;">' + esc(r.title || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:var(--dim);overflow-wrap:anywhere;">' + esc(r.authors || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:var(--dim);overflow-wrap:anywhere;">' + esc(r.journal || r.source || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);font-weight:700;color:' + lvColor + ';white-space:nowrap;">' + esc(lv) + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:var(--dim);white-space:nowrap;">' + esc(r.year || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:var(--dim);">' + esc(r.cite || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">'
+              + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener" style="color:var(--primary);">链接</a>' : '<span style="color:var(--dim);">—</span>') + '</td>'
+              + '</tr>';
+          });
+          html += '</tbody></table></div>'
+            + '<div style="font-size:11.5px;color:var(--dim);margin-top:7px;line-height:1.7;">本表由系统按主教练实际注入的信息池自动生成，<b>未经语言模型改写</b>，<b>仅收录可溯源到期刊/会议/出版机构或 DOI 的学术来源</b>。「级别」依据公开名录判定：<b>CSSCI 来源期刊目录（2025-2026）</b>、<b>《中文核心期刊要目总览》（2023 年版）</b>、<b>SJR 2025 分区（Scimago）</b>。报告正文中的 [P1] 等编号即指向本表。</div>'
+            + '</details>';
+        }
+        if(webRefs.length){
+          // B9（2026-10-10）：网络资料只有在开了白名单网（QUNZHI_ALLOW_WEB=1）时才会出现，
+          // 因此这里加一列「可信度」把判定来源（可信来源/学术来源）摆出来——你能看到
+          // 进池的每一条网络资料为什么被放行。未开网时该列为空，与旧界面一致。
+          var hasTier = webRefs.some(function(r){ return !!r.source_tier_label; });
+          html += '<details style="margin-top:8px;"><summary style="font-size:12.5px;color:var(--warn);cursor:pointer;font-weight:600;">🌐 网络资料（' + webRefs.length + ' 条，非学术来源）</summary>'
+            + '<div style="margin-top:8px;overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;">'
+            + '<thead><tr>' + (hasTier ? ['编号','标题','来源站点','可信度','链接'] : ['编号','标题','来源站点','链接'])
+                .map(function(h){return '<th style="text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;">' + h + '</th>';}).join("")
+            + '</tr></thead><tbody>';
+          webRefs.forEach(function(r){
+            var host = ''; try { host = new URL(r.url || '').hostname; } catch(e) { host = '-'; }
+            var tier = r.source_tier_label || '';
+            var tierColor = (tier.indexOf('可信') === 0) ? '#059669' : (tier.indexOf('学术') === 0 ? '#2563EB' : 'var(--dim)');
+            html += '<tr>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:var(--warn);font-weight:700;white-space:nowrap;">' + esc(r.ref_no || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);overflow-wrap:anywhere;">' + esc(r.title || "-") + '</td>'
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);color:var(--dim);overflow-wrap:anywhere;">' + esc(host) + '</td>'
+              + (hasTier ? ('<td style="padding:5px 6px;border-bottom:1px dashed var(--border);font-weight:700;color:' + tierColor + ';white-space:nowrap;" title="' + esc(r.source_tier_reason || '') + '">' + esc(tier || '—') + '</td>') : '')
+              + '<td style="padding:5px 6px;border-bottom:1px dashed var(--border);">'
+              + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener" style="color:var(--primary);">链接</a>' : '<span style="color:var(--dim);">—</span>') + '</td>'
+              + '</tr>';
+          });
+          html += '</tbody></table></div>'
+            + '<div style="font-size:11.5px;color:var(--dim);margin-top:7px;line-height:1.7;">以下为检索到的<b>网页/新闻/自媒体</b>内容，仅作背景参考，<b>不作为文献依据</b>；正文若引用请写明「据网络报道」。'
+            + (hasTier ? '「可信度」由<b>规则白名单</b>判定（政府/国际组织/高校/权威媒体为"可信来源"，有 DOI 或学术域名为"学术来源"）；<b>白名单外的网络源已在注入前剔除</b>，剔除明细见上方「检索漏斗」。' : '')
+            + '</div>'
+            + '</details>';
+        }
+      } else if(refs.length === 0 && cc && cc.pool_size){
+        html += '<div style="font-size:12px;color:var(--dim);margin-top:6px;">本轮信息池无学术来源。</div>';
+      }
+      html += '</div>';
+    }
+    // 深批者视角（对抗性评审——AI 自己挑自己毛病）
+    if(d.deep_critic && d.deep_critic.length > 20){
+      html += '<div style="margin-top:14px;padding:14px 16px;background:#1F2937;border-radius:10px;font-size:13px;color:#E5E7EB;line-height:1.8;border-left:4px solid #EF4444;">' +
+        '<div style="font-weight:700;margin-bottom:8px;color:#FCA5A5;">🧐 深批者视角 <span style="font-weight:400;font-size:11px;color:#9CA3AF;">（对抗性评审：AI 建议的边界在哪？）</span></div>' +
+        '<div style="white-space:pre-wrap;">' + esc(d.deep_critic) + '</div></div>';
+    }
+    // 诚实声明（底部小字：AI 偏理想化，需人类判断）
+    html += '<div style="margin-top:12px;padding:10px 12px;background:#F5F0E8;border-radius:8px;font-size:11.5px;color:var(--dim);line-height:1.7;">' +
+      '⚠️ <b>诚实声明：</b>' + esc(d.honesty_note || "AI 团队讨论天然偏理想化——真实世界的预算约束、利益博弈、执行阻力，需要你在决策时自行补上。本报告仅供参考，不替代专业判断。") + '</div>';
+    // 用户反馈（比赛实证收集）
+    html += '<div class="card" style="margin-top:14px;"><h3><span class="ico">💬</span> 这个预演对你有帮助吗？</h3>' +
+      '<div style="font-size:26px;margin-bottom:10px;" id="starRow">' +
+      '⭐<span style="font-size:14px;color:var(--dim);margin-left:8px;">点击星星打分</span></div>' +
+      '<div style="display:flex;gap:4px;margin-bottom:10px;">' +
+      [1,2,3,4,5].map(function(n){ return '<span class="star" data-v="'+n+'" style="font-size:30px;cursor:pointer;color:#d1d5db;" onclick="pickStar('+n+')">★</span>'; }).join("") +
+      '</div>' +
+      '<textarea id="feedbackComment" placeholder="你的感受/建议（一句话就行）..." style="margin-bottom:10px;"></textarea>' +
+      '<button class="btn" onclick="submitFeedback(\'' + esc(d.topic||"") + '\')">📮 提交反馈</button>' +
+      '<div id="feedbackMsg" style="font-size:12px;color:var(--green);margin-top:8px;"></div></div>';
+    box.innerHTML = html;
+    document.querySelector('[data-view="result"]').click();
+  });
+}
+
+// ====================================================================
+// 启动时恢复上一局（V16.1 新增，2026-10-11）
+// 事故背景：用户"刷新过后全部消失了 / 我原有的报告也消失了，跟我们正常用的网页不一样"——
+// 会话号只存在内存变量 currentSession 里，一刷新就丢；而结果页内容完全依赖它。
+// 会话是**服务端本来就有的**（/api/sandbox/result/<sid>），没有任何理由让它随刷新消失。
+// 现在：① 会话号同时写 URL(?session=) 与 localStorage；② 页面加载时读回；
+//       ③ 恢复你上次停在的标签页；④ 若 v6 还在算，loadResult 会持续轮询并显示"计算中"。
+// ====================================================================
+(function restoreLastSession(){
+  try{
+    var sid = readSessionFromLocation();
+    var view = readViewFromLocation();
+    if(view && view !== "start"){
+      var nb = document.querySelector('[data-view="' + view + '"]');
+      if(nb) nb.click();
+    } else if(sid){
+      var rb = document.querySelector('[data-view="result"]');
+      if(rb) rb.click();                       // 有会话但没记标签页 → 默认回结果页
+    }
+    if(!sid) return;
+    currentSession = sid;
+    var lbl = document.getElementById("sessionLabel");
+    if(lbl) lbl.textContent = "（" + sid + "，已恢复上一局）";
+    var st = document.getElementById("startStatus");
+    if(st) st.innerHTML = "↩️ 已恢复你上一次的预演（" + sid + "）"
+      + "——链接已带上会话号，<b>可收藏、可分享</b>。如需重新发起，直接在上方填写课题即可。";
+    // 注意：loadResult() 结尾会**自动跳到结果页**，所以停在「讨论监控」时不能调它，
+    // 否则刷新后标签页会被抢走（那也是"跟正常网页不一样"的一种表现）。
+    if(view === "monitor"){
+      connectStream(sid);        // 重连实时日志流（讨论还在跑时能接着看）
+      loadResultSilently();      // 静默取一次状态：讨论已完成则重放历史记录，但不切页
+    } else {
+      loadResult();
+    }
+  }catch(e){ /* 恢复失败不影响正常使用 */ }
+})();
+
+// 静默取状态：不渲染结果页、不切换标签页。仅用于"停在监控页刷新"时判断讨论是否已完成。
+function loadResultSilently(){
+  if(!currentSession) return;
+  apiFetch(API + "/api/sandbox/result/" + currentSession)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var area = document.getElementById("logArea");
+      if(!d || !area) return;
+      // V16.4：**把落盘的讨论记录重放出来**。
+      // 用户反馈「我的讨论记录怎么又不见了」——根因是日志只在 SSE 里画过，
+      // 刷新后没人重放（而 session.logs 一直存着）。这里补上重放。
+      if(d.logs && d.logs.length){
+        replayLogs(d.logs);
+        if(d.status === "done"){
+          area.innerHTML += '<div class="log-item system">✅ 本局讨论已完成 —— '
+            + '点上方「📊 决策报告」查看完整报告与评审读数。</div>';
+        }
+        return;
+      }
+      if(d.status === "done"){
+        area.innerHTML += '<div class="log-item system">✅ 本局讨论已完成 —— '
+          + '点上方「📊 决策报告」查看完整报告与评审读数。</div>';
+      }
+    }).catch(function(){});
+}
+
+var pickedRating = 0;
+function pickStar(n){
+  pickedRating = n;
+  document.querySelectorAll(".star").forEach(function(s){
+    s.style.color = parseInt(s.dataset.v) <= n ? "#F59E0B" : "#d1d5db";
+  });
+}
+function submitFeedback(topic){
+  var comment = document.getElementById("feedbackComment").value.trim();
+  if(!pickedRating){ document.getElementById("feedbackMsg").textContent = "请先点星星打分"; return; }
+  apiFetch(API + "/api/feedback", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({topic: topic, rating: pickedRating, comment: comment, session_id: currentSession||""})})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var msg = document.getElementById("feedbackMsg");
+    if(d.ok){
+      msg.textContent = "✅ 感谢反馈！已记录（当前平均 " + d.stats.avg_rating + " 分，共 " + d.stats.total + " 条）";
+    } else {
+      msg.textContent = "提交失败，但你的体验对我们很重要";
+    }
+  }).catch(function(){ document.getElementById("feedbackMsg").textContent = "网络错误，稍后再试"; });
+}
+</script>
+
+<!-- 群智 · 涌现 开场（v2：四幕叙事 + 用户主动进入）-->
+<script id="qz-intro-js">
+/* ====================================================================
+   群智 · 涌现 —— 开场（重新设计版 v2）
+   ====================================================================
+   上一版的问题（用户原话）：
+     「时间太短了，没有啥交互和叙事结构，你不能主动进入，你要让用户进入」
+   → 上一版是"帘子自动拉开"：3 秒后自己消失。那是**系统主动**，不是**用户进入**。
+
+   这一版把它做成一个**入口**，四幕叙事，两处必须由用户动作推进：
+
+     第一幕 · 提问    粒子缓慢呼吸 + 鼠标视差；中央问「你想预演什么决策？」
+                     用户必须**输入或点示例**，动画不会自己往下走
+     第二幕 · 拆解    用户提交后，问题**化作粒子**飞向中心；六个视角依次点亮
+                     （理论家/社会学家/批评家/实践者/审计员/方法论审计员）
+     第三幕 · 涌现    连线交织成网络球 → 光晕爆发 → 标题「群智 · 涌现」
+     第四幕 · 进入    **停下来等用户点「进入预演 →」**，点了才进控制台
+
+   两个额外好处（让它不只是装饰）：
+     · 用户输入的问题会**自动填进控制台的 #topicInput**
+     · 「拆解」「涌现」讲的正是产品真实机制，等于开场就做了产品说明
+
+   零外部依赖：Canvas 2D + 手写 3D 投影，约 14KB（three.js 版要 1.5MB）
+   ==================================================================== */
+(function () {
+  "use strict";
+  var KEY_OFF = "qz_intro_off";
+  try { if (localStorage.getItem(KEY_OFF) === "1") return; } catch (e) {}
+
+  var AGENTS = [
+    { n: "理论家", d: "把问题拆成可检验的命题" },
+    { n: "社会学家", d: "看利益相关方与制度约束" },
+    { n: "批评家", d: "找方案最可能崩的地方" },
+    { n: "实践者", d: "算成本、工期与可执行性" },
+    { n: "审计员", d: "核数字、核出处、核口径" },
+    { n: "方法论审计员", d: "质疑我们自己的判断方式" }
+  ];
+  var SAMPLES = [
+    "如何提升师范生课堂参与度？",
+    "该不该把实验室的成果先做成产品？",
+    "团队该扩招还是先提效？"
+  ];
+
+  /* ---------------- DOM ---------------- */
+  var ov = document.createElement("div");
+  ov.id = "qz-intro";
+  ov.innerHTML =
+    '<canvas id="qz-intro-cv"></canvas>' +
+    '<div id="qz-intro-vig"></div>' +
+    '<div id="qz-intro-fly"></div>' +
+    '<div id="qz-intro-s1">' +
+      '<div class="qz-h1">每一次决策，都值得先预演一次</div>' +
+      '<div class="qz-h2">你想预演什么决策？</div>' +
+      '<div class="qz-row"><input id="qz-in" type="text" maxlength="80" ' +
+        'placeholder="写下你的决策问题，例如：该不该先做产品？" autocomplete="off"></div>' +
+      '<div class="qz-samples" id="qz-samples"></div>' +
+      '<button id="qz-go" type="button">进入预演 →</button>' +
+      '<div class="qz-tip">按 Enter 也可以</div>' +
+    '</div>' +
+    '<div id="qz-intro-s2">' +
+      '<div class="qz-stage" id="qz-stage">正在用六个视角拆解你的问题</div>' +
+      '<div class="qz-agents" id="qz-agents"></div>' +
+    '</div>' +
+    '<div id="qz-intro-s3">' +
+      '<div id="qz-title">群智 · 涌现</div>' +
+      '<div id="qz-sub">不是 AI 替你回答，是 AI 团队替你预演</div>' +
+    '</div>' +
+    '<div id="qz-intro-s4">' +
+      '<button id="qz-enter" type="button">进入预演 →</button>' +
+      '<div class="qz-tip">你的问题已经带进去了</div>' +
+    '</div>' +
+    '<button id="qz-skip" type="button">跳过开场</button>' +
+    '<button id="qz-never" type="button">以后不再显示</button>';
+  (document.body || document.documentElement).appendChild(ov);
+
+  var cv = document.getElementById("qz-intro-cv");
+  var ctx = cv.getContext("2d");
+  var W = 0, H = 0, DPR = 1, R = 0, CX = 0, CY = 0;
+  var mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+
+  /* ---------------- 场景显隐（必须在初始化时就打开第一幕）----------------
+     事故（2026-10-11，视觉自检抓到）：四幕都是 opacity:0，靠 .qz-on 显现，
+     而我**从未给第一幕加过 .qz-on** → 用户只会看到一片粒子和一个"跳过"按钮，
+     输入框和「进入预演」全都不可见 —— 整个开场等于进不去。
+     教训：**默认隐藏的元素，必须有显式的一处把它打开**，而且要能自检出来。 */
+  function show(id, on) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle("qz-on", !!on);
+  }
+  show("qz-intro-s1", true);        // ← 关键：初始就打开第一幕
+
+  /* ---------------- 几何：斐波那契球 + 近邻连边 ---------------- */
+  var pts = [], edges = [];
+  (function build() {
+    var n = 118, ga = Math.PI * (3 - Math.sqrt(5));
+    for (var i = 0; i < n; i++) {
+      var y = 1 - (i / (n - 1)) * 2, rad = Math.sqrt(Math.max(0, 1 - y * y)), th = ga * i;
+      pts.push({ x: Math.cos(th) * rad, y: y, z: Math.sin(th) * rad });
+    }
+    var maxD = 0.62, cnt = new Array(n).fill(0);
+    for (var a = 0; a < n; a++) {
+      for (var b = a + 1; b < n; b++) {
+        if (cnt[a] >= 3 || cnt[b] >= 3) continue;
+        var dx = pts[a].x - pts[b].x, dy = pts[a].y - pts[b].y, dz = pts[a].z - pts[b].z;
+        if (dx * dx + dy * dy + dz * dz < maxD * maxD) { edges.push([a, b]); cnt[a]++; cnt[b]++; }
+      }
+    }
+  })();
+
+  /* ---------------- 粒子 ---------------- */
+  var P = [];
+  function mkP(p, spread) {
+    p.ti = Math.floor(Math.random() * pts.length);
+    var t = pts[p.ti];
+    p.tx = t.x; p.ty = t.y; p.tz = t.z;
+    var ang = Math.random() * Math.PI * 2, rr = (spread || 2.1) + Math.random() * 1.4;
+    p.sx = Math.cos(ang) * rr; p.sy = Math.sin(ang) * rr; p.sz = (Math.random() - 0.5) * 1.6;
+    p.delay = Math.random() * 900; p.dur = 1100 + Math.random() * 700;
+    p.warm = Math.random() < 0.42;
+    p.r = 0.7 + Math.random() * 1.5;
+    // 第一幕的"呼吸漂浮"位置
+    p.fx = (Math.random() - 0.5) * 2.6; p.fy = (Math.random() - 0.5) * 2.6;
+    p.fz = (Math.random() - 0.5) * 1.4; p.ph = Math.random() * 6.2832;
+    return p;
+  }
+  function setup() {
+    P = [];
+    var n = W < 620 ? Math.round(320 * 0.62) : 320;   // 第一幕粒子少一些，呼吸感更静
+    for (var i = 0; i < n; i++) P.push(mkP({}));
+  }
+  function grow(n) {                                   // 第二幕再补粒子
+    while (P.length < n) P.push(mkP({}, 2.4));
+  }
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+    cv.style.width = W + "px"; cv.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    CX = W / 2; CY = H / 2; R = Math.min(W, H) * 0.30;
+    setup();
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+  function project(x, y, z, rotY, rotX) {
+    var cy = Math.cos(rotY), sy = Math.sin(rotY);
+    var X = x * cy - z * sy, Z = x * sy + z * cy;
+    var cx2 = Math.cos(rotX), sx2 = Math.sin(rotX);
+    var Y = y * cx2 - Z * sx2, Z2 = y * sx2 + Z * cx2;
+    var persp = 2.6 / (2.6 + Z2);
+    return { x: CX + X * R * persp, y: CY + Y * R * persp, s: persp, z: Z2 };
+  }
+
+  /* ---------------- 状态机 ---------------- */
+  var S = "ask";                 // ask → gather → emerge → enter
+  var tStart = performance.now();
+  var tGather = 0, tEmerge = 0, burst = -1, entered = 0;
+  var TOPIC = "";
+  var agentsShown = 0;
+  function now() { return performance.now(); }
+  function since(t) { return now() - t; }
+
+  /* ---------------- 主循环 ---------------- */
+  function frame() {
+    var el = now() - tStart;
+    var rotY = el * (S === "ask" ? 0.00016 : 0.00044);
+    var rotX = Math.sin(el * 0.0007) * 0.16;
+
+    mouse.x += (mouse.tx - mouse.x) * 0.06;
+    mouse.y += (mouse.ty - mouse.y) * 0.06;
+
+    ctx.clearRect(0, 0, W, H);
+    var bg = ctx.createRadialGradient(CX, CY, 0, CX, CY, Math.max(W, H) * 0.62);
+    bg.addColorStop(0, "rgba(30,62,120,0.28)");
+    bg.addColorStop(0.45, "rgba(14,26,48,0.15)");
+    bg.addColorStop(1, "rgba(10,15,26,0)");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    // ---- 第一幕：稀疏呼吸 + 鼠标视差（不做汇聚）----
+    if (S === "ask") {
+      ctx.globalCompositeOperation = "lighter";
+      for (var i = 0; i < P.length; i++) {
+        var p = P[i];
+        var br = Math.sin(el * 0.0009 + p.ph) * 0.07;             // 呼吸
+        var px = p.fx + br + mouse.x * 0.12 * (1 + p.fz);
+        var py = p.fy + br * 0.7 + mouse.y * 0.12 * (1 + p.fz);
+        var pr = project(px, py, p.fz, rotY * 0.3, rotX * 0.3);
+        var a = 0.16 + 0.16 * (0.5 + 0.5 * Math.sin(el * 0.0012 + p.ph));
+        ctx.fillStyle = p.warm ? "rgba(255,248,240," + a.toFixed(3) + ")"
+                               : "rgba(74,140,255," + (a * 1.15).toFixed(3) + ")";
+        ctx.beginPath(); ctx.arc(pr.x, pr.y, Math.max(0.5, p.r * pr.s * 0.85), 0, 6.2832); ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
+      requestAnimationFrame(frame);
+      return;
+    }
+
+    // ---- 第二幕起：汇聚 ----
+    if (S !== "ask") grow(W < 620 ? 300 : 520);
+    var el2 = since(tGather);
+    var arrived = new Array(pts.length).fill(1e9);
+    for (var k = 0; k < P.length; k++) {
+      var q = P[k];
+      var prog = (el2 - q.delay) / q.dur;
+      if (prog >= 1 && el2 < arrived[q.ti]) arrived[q.ti] = q.delay + q.dur;
+    }
+
+    // 棱
+    for (var e = 0; e < edges.length; e++) {
+      var A = edges[e][0], B = edges[e][1];
+      if (arrived[A] > 1e8 || arrived[B] > 1e8) continue;
+      var lit = Math.min(1, Math.max(0, (el2 - Math.max(arrived[A], arrived[B])) / 480));
+      if (lit <= 0) continue;
+      var pa = project(pts[A].x, pts[A].y, pts[A].z, rotY, rotX);
+      var pb = project(pts[B].x, pts[B].y, pts[B].z, rotY, rotX);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(74,140,255," + (0.16 * lit * Math.min(pa.s, pb.s)).toFixed(3) + ")";
+      ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+    }
+
+    // 粒子
+    ctx.globalCompositeOperation = "lighter";
+    for (var m = 0; m < P.length; m++) {
+      var pp = P[m];
+      var t = (el2 - pp.delay) / pp.dur; if (t < 0) t = 0; if (t > 1) t = 1;
+      var k2 = ease(t);
+      var x = pp.sx + (pp.tx - pp.sx) * k2, y = pp.sy + (pp.ty - pp.sy) * k2;
+      var z = pp.sz + (pp.tz - pp.sz) * k2;
+      var pj = project(x, y, z, rotY, rotX);
+      var a2 = 0.2 + 0.8 * k2;
+      ctx.fillStyle = pp.warm ? "rgba(255,248,240," + (a2 * 0.92).toFixed(3) + ")"
+                              : "rgba(74,140,255," + a2.toFixed(3) + ")";
+      var rad = Math.max(0.6, pp.r * pj.s);
+      ctx.beginPath(); ctx.arc(pj.x, pj.y, rad, 0, 6.2832); ctx.fill();
+      if (t > 0.97) {
+        ctx.fillStyle = pp.warm ? "rgba(255,248,240,0.08)" : "rgba(74,140,255,0.09)";
+        ctx.beginPath(); ctx.arc(pj.x, pj.y, rad * 3.2, 0, 6.2832); ctx.fill();
+      }
+    }
+    ctx.globalCompositeOperation = "source-over";
+
+    // 光晕（第三幕）
+    if (S !== "gather" && burst < 0) burst = now();
+    if (burst > 0) {
+      var bt = (now() - burst) / 1100;
+      if (bt < 1) {
+        var brr = R * (0.55 + bt * 2.6), ba = (1 - bt) * 0.40;
+        var g2 = ctx.createRadialGradient(CX, CY, brr * 0.55, CX, CY, brr);
+        g2.addColorStop(0, "rgba(74,140,255,0)");
+        g2.addColorStop(0.72, "rgba(120,175,255," + (ba * 0.8).toFixed(3) + ")");
+        g2.addColorStop(1, "rgba(74,140,255,0)");
+        ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+      }
+    }
+
+    // 六个视角依次点亮（第二幕）
+    if (S === "gather") {
+      var want = Math.min(AGENTS.length, Math.floor(Math.max(0, el2 - 700) / 620));
+      while (agentsShown < want) {
+        (function (idx) {
+          var el = document.getElementById("ag" + idx);
+          if (el) setTimeout(function () { el.classList.add("on"); }, 20);
+        })(agentsShown);
+        agentsShown++;
+      }
+      if (el2 > 700 + AGENTS.length * 620 + 1500) goScene("emerge");
+    }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---------------- 场景切换 ---------------- */
+  function goScene(s) {
+    S = s;
+    if (s === "gather") {
+      tGather = now();
+      show("qz-intro-s1", false);
+      show("qz-intro-s2", true);
+      spawnFly();
+    } else if (s === "emerge") {
+      tEmerge = now();
+      show("qz-intro-s2", false);
+      show("qz-intro-s3", true);
+    } else if (s === "enter") {
+      show("qz-intro-s4", true);
+    }
+  }
+
+  // 第二幕：用户输入的文字 → 粒子飞出（"你的问题正在被拆解"）
+  function spawnFly() {
+    var host = document.getElementById("qz-intro-fly");
+    var box = document.getElementById("qz-in");
+    if (!host || !box) return;
+    var r = box.getBoundingClientRect();
+    var txt = (TOPIC || "你的问题").slice(0, 14);
+    host.innerHTML = "";
+    for (var i = 0; i < txt.length; i++) {
+      var d = document.createElement("span");
+      d.textContent = txt[i];
+      var x0 = r.left + 18 + i * (r.width / Math.max(1, txt.length)) * 0.9;
+      d.style.left = x0 + "px";
+      d.style.top = (r.top + r.height / 2) + "px";
+      d.style.animationDelay = (i * 45) + "ms";
+      host.appendChild(d);
+    }
+    setTimeout(function () { host.innerHTML = ""; }, 2600);
+  }
+
+  /* ---------------- 第一幕：输入 ---------------- */
+  var inp = document.getElementById("qz-in");
+  var go = document.getElementById("qz-go");
+  var samples = document.getElementById("qz-samples");
+  SAMPLES.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = s;
+    b.onclick = function (e) {
+      e.stopPropagation();
+      inp.value = s; sync(); inp.focus();
+    };
+    samples.appendChild(b);
+  });
+  // 不做禁用态：灰掉的按钮用户看不见（视觉自检也确实判为「元素缺失」）。
+  // 改成「始终可点，空输入时拉回焦点并抖一下」——比灰按钮更好懂。
+  function sync() {}
+  inp.addEventListener("input", sync);
+  inp.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); submit(); }
+    e.stopPropagation();                     // 别触发"任意键跳过"
+  });
+  inp.addEventListener("click", function (e) { e.stopPropagation(); });
+  function submit() {
+    if (S !== "ask") return;
+    TOPIC = (inp.value || "").trim();
+    if (!TOPIC) {
+      inp.focus();
+      inp.classList.remove("qz-shake");
+      void inp.offsetWidth;                  // 强制重排，让抖动动画能重播
+      inp.classList.add("qz-shake");
+      return;
+    }
+    goScene("gather");
+  }
+  go.addEventListener("click", function (e) { e.stopPropagation(); submit(); });
+
+  // 六视角列表（第二幕用）
+  var host = document.getElementById("qz-agents");
+  AGENTS.forEach(function (a, i) {
+    var d = document.createElement("div");
+    d.className = "qz-agent"; d.id = "ag" + i;
+    d.innerHTML = '<b>' + a.n + '</b><span>' + a.d + '</span>';
+    host.appendChild(d);
+  });
+
+  /* ---------------- 第四幕：用户主动进入 ---------------- */
+  var enterBtn = document.getElementById("qz-enter");
+  if (enterBtn) {
+    enterBtn.addEventListener("click", function (e) { e.stopPropagation(); enter(); });
+  }
+  function enter() {
+    if (S !== "enter") return;
+    entered = now();
+    // 把用户的问题带进控制台
+    try {
+      var ti = document.getElementById("topicInput");
+      if (ti && TOPIC) {
+        ti.value = TOPIC;
+        ti.dispatchEvent(new Event("input", { bubbles: true }));
+        var sb = document.getElementById("startBtn");
+        if (sb) sb.scrollIntoView({ behavior: "instant", block: "center" });
+      }
+    } catch (er) {}
+    close(false);
+  }
+  // 第三幕结束后**停下来等**，不再自动进入
+  var waitEmerge = setInterval(function () {
+    if (S === "emerge" && since(tEmerge) > 2200) { clearInterval(waitEmerge); goScene("enter"); }
+    if (S === "enter" || S === "done") clearInterval(waitEmerge);
+  }, 120);
+
+  /* ---------------- 鼠标视差 & 跳过 ---------------- */
+  document.addEventListener("mousemove", function (e) {
+    mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  var closed = false;
+  function close(immediate) {
+    if (closed) return; closed = true; S = "done";
+    ov.classList.add("qz-intro-out");
+    setTimeout(function () {
+      if (ov.parentNode) ov.parentNode.removeChild(ov);
+      window.removeEventListener("resize", resize);
+    }, 520);
+  }
+  function skip() {
+    // 跳过：把用户已经写的问题也带进去（不白写）
+    try {
+      var ti = document.getElementById("topicInput");
+      if (ti && TOPIC && !ti.value) ti.value = TOPIC;
+    } catch (e) {}
+    close(true);
+  }
+  var skipBtn = document.getElementById("qz-skip");
+  if (skipBtn) skipBtn.addEventListener("click", function (e) { e.stopPropagation(); skip(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { e.preventDefault(); skip(); }
+  });
+  var never = document.getElementById("qz-never");
+  if (never) {
+    never.addEventListener("click", function (e) {
+      e.stopPropagation();
+      try { localStorage.setItem(KEY_OFF, "1"); } catch (er) {}
+      skip();
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

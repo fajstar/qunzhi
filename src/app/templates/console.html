@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群智 · 科研决策预演智能体 V15</title>
+<style>
+  :root {
+    --bg: #0a0e1a; --panel: #121a2e; --panel2: #16203a; --border: #1f2b47;
+    --text: #e8edf7; --dim: #8b98b8; --accent: #22d3ee; --accent2: #34d399;
+    --primary: #6366f1; --warn: #f59e0b; --danger: #f87171;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Microsoft YaHei',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  .topbar { background:linear-gradient(135deg,#121a2e,#1a2a4a); border-bottom:1px solid var(--border); padding:16px 28px; display:flex; justify-content:space-between; align-items:center; }
+  .topbar h1 { font-size:20px; display:flex; align-items:center; gap:10px; }
+  .topbar .badge { font-size:12px; background:rgba(34,211,238,.15); color:var(--accent); padding:4px 12px; border-radius:16px; }
+  .nav { display:flex; gap:6px; padding:10px 28px 0; }
+  .nav button { background:transparent; border:1px solid var(--border); color:var(--dim); padding:8px 18px; border-radius:10px 10px 0 0; cursor:pointer; font-size:14px; transition:all .15s; }
+  .nav button.active { background:var(--panel); color:var(--accent); border-color:var(--border); border-bottom-color:var(--panel); }
+  .content { padding:20px 28px; max-width:1200px; margin:0 auto; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:16px; }
+  .panel h3 { font-size:15px; margin-bottom:12px; color:var(--accent); }
+  .hidden { display:none; }
+
+  .btn { background:var(--accent); color:#06121e; border:none; padding:10px 22px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; transition:all .15s; }
+  .btn:hover { filter:brightness(1.15); }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--dim); }
+  .btn-ghost:hover { color:var(--text); border-color:#2a3a63; }
+
+  input[type=text], textarea { width:100%; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:12px 14px; font-size:14px; outline:none; }
+  input[type=text]:focus, textarea:focus { border-color:var(--accent); }
+  textarea { min-height:60px; resize:vertical; }
+
+  .preset-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; }
+  .preset-card { background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:16px; cursor:pointer; transition:all .15s; }
+  .preset-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .preset-card .t { font-size:14px; font-weight:600; margin-bottom:6px; }
+  .preset-card .d { font-size:12px; color:var(--dim); line-height:1.5; }
+  .preset-card .tag { display:inline-block; font-size:11px; background:rgba(99,102,241,.15); color:#a5b4fc; padding:2px 8px; border-radius:10px; margin-top:8px; margin-right:4px; }
+
+  .log-item { padding:10px 14px; border-left:3px solid var(--border); margin-bottom:6px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.6; }
+  .log-item.speech { border-left-color:var(--accent); background:var(--panel2); }
+  .log-item.system { border-left-color:var(--primary); color:var(--dim); }
+  .log-item.round { border-left-color:var(--warn); font-weight:700; color:var(--warn); }
+  .log-item.intervention { border-left-color:var(--danger); color:var(--danger); font-weight:600; }
+  .log-item .meta { font-size:11px; color:var(--dim); margin-bottom:3px; }
+  .log-area { max-height:500px; overflow-y:auto; }
+
+  .report-box { background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:18px; font-size:13px; line-height:1.8; white-space:pre-wrap; }
+  .dim-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; margin-bottom:12px; }
+  .dim-box { background:var(--panel2); border-radius:10px; padding:12px; text-align:center; }
+  .dim-box .v { font-size:24px; font-weight:800; color:var(--accent); }
+  .dim-box .l { font-size:12px; color:var(--dim); margin-top:4px; }
+
+  .chat-box { height:320px; overflow-y:auto; background:var(--panel2); border-radius:10px; padding:14px; margin-bottom:10px; }
+  .chat-msg { margin-bottom:10px; font-size:13px; line-height:1.6; }
+  .chat-msg.user { color:var(--accent); }
+  .chat-msg.ai { color:var(--text); }
+  .loading { color:var(--accent); font-size:13px; animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>🧠 群智 · 科研决策预演智能体 <span class="badge">V15</span></h1>
+  <div style="font-size:12px;color:var(--dim);">不是人问AI答，而是AI团队替你预演决策</div>
+</div>
+<div class="nav">
+  <button class="active" data-tab="start">🚀 预演</button>
+  <button data-tab="monitor">📡 讨论监控</button>
+  <button data-tab="result">📊 决策报告</button>
+  <button data-tab="coach">👨‍🏫 主教练</button>
+</div>
+<div class="content">
+
+  <!-- 预演页 -->
+  <div id="tab-start" class="panel">
+    <h3>🎯 发起一场科研决策预演</h3>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;color:var(--dim);">输入你的课题</label>
+      <input type="text" id="topicInput" placeholder="例如：大学生使用AI写作业，学校该禁止还是引导？">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;color:var(--dim);">你的初步想法（可选，主教练会帮你挖认知盲区）</label>
+      <textarea id="thoughtInput" placeholder="例如：应该引导而非禁止，但不知道怎么落地"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
+      <select id="scenarioSelect" style="background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:10px;border-radius:10px;">
+        <option value="教研">教研决策（师范场景）</option>
+        <option value="科研">科研决策</option>
+        <option value="通用">通用预演</option>
+      </select>
+      <label style="font-size:12px;color:var(--dim);display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="searchCheck" checked> 主教练联网搜索注入
+      </label>
+      <button class="btn" id="startBtn" onclick="startSession()">🚀 启动预演</button>
+    </div>
+    <div class="loading hidden" id="startingMsg">主教练正在联网检索课题信息并组建AI团队...</div>
+    <div id="startStatus" style="font-size:13px;color:var(--dim);"></div>
+    <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
+      <h3 style="font-size:14px;">📚 预设教研课题（一键演示）</h3>
+      <div class="preset-grid" id="presetGrid"></div>
+    </div>
+  </div>
+
+  <!-- 讨论监控页 -->
+  <div id="tab-monitor" class="panel hidden">
+    <h3>📡 实时讨论监控 <span id="sessionLabel" style="font-size:12px;color:var(--dim);"></span></h3>
+    <div class="log-area" id="logArea"><div style="color:var(--dim);font-size:13px;">启动预演后，这里实时显示AI团队讨论过程...</div></div>
+  </div>
+
+  <!-- 决策报告页 -->
+  <div id="tab-result" class="panel hidden">
+    <h3>📊 决策预演报告</h3>
+    <div id="resultBox"><div style="color:var(--dim);font-size:13px;">讨论完成后，这里展示完整决策报告、主教练审计与认知盲区。</div></div>
+  </div>
+
+  <!-- 主教练页 -->
+  <div id="tab-coach" class="panel hidden">
+    <h3>👨‍🏫 主教练对话（全局视野：N次实验 + 高频审计意见 + 历史笔记）</h3>
+    <div class="chat-box" id="coachChat"></div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="coachInput" placeholder="问主教练：例如'哪种人格配置效果最好？'" onkeydown="if(event.key==='Enter')coachAsk()">
+      <button class="btn" onclick="coachAsk()">发送</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = "http://127.0.0.1:5020";
+var currentSession = null;
+var eventSource = null;
+
+// Tab 切换
+document.querySelectorAll(".nav button").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll(".nav button").forEach(function(x){x.classList.remove("active");});
+    this.classList.add("active");
+    document.querySelectorAll(".content > div").forEach(function(x){x.classList.add("hidden");});
+    document.getElementById("tab-" + this.dataset.tab).classList.remove("hidden");
+  });
+});
+
+// 加载预设课题
+function loadPresets(){
+  fetch(API + "/api/presets").then(function(r){return r.json();}).then(function(d){
+    var grid = document.getElementById("presetGrid");
+    grid.innerHTML = "";
+    (d.presets||[]).forEach(function(p){
+      var card = document.createElement("div");
+      card.className = "preset-card";
+      card.innerHTML = '<div class="t">🎯 ' + esc(p.title) + '</div><div class="d">' + esc(p.description) + '</div>' +
+        (p.tags||[]).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join("") +
+        '<div style="font-size:11px;color:var(--dim);margin-top:6px;">默认想法：'+esc(p.user_thought||"")+'</div>';
+      card.onclick = function(){
+        document.getElementById("topicInput").value = p.title;
+        document.getElementById("thoughtInput").value = p.user_thought || "";
+        document.getElementById("scenarioSelect").value = p.scenario === "科研" ? "科研" : "教研";
+      };
+      grid.appendChild(card);
+    });
+  });
+}
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+function startSession(){
+  var topic = document.getElementById("topicInput").value.trim();
+  if(!topic){alert("请输入课题");return;}
+  var body = {
+    topic: topic,
+    user_thought: document.getElementById("thoughtInput").value.trim(),
+    max_rounds: 3,
+    info_mode: document.getElementById("searchCheck").checked ? "coach_search" : "preset",
+    scenario: document.getElementById("scenarioSelect").value,
+  };
+  document.getElementById("startBtn").disabled = true;
+  document.getElementById("startingMsg").classList.remove("hidden");
+  fetch(API + "/api/sandbox/start", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      document.getElementById("startingMsg").classList.add("hidden");
+      document.getElementById("startBtn").disabled = false;
+      if(d.status === "started"){
+        currentSession = d.session_id;
+        var teamInfo = d.search_meta ? ("主教练注入 " + d.search_meta.results_count + " 条联网信息") : "";
+        document.getElementById("startStatus").innerHTML = "✅ 预演已启动：主教练已组建最优人格团队并注入信息" + teamInfo + "。<br>切换到「讨论监控」查看实时过程。";
+        document.getElementById("sessionLabel").textContent = "（" + d.session_id + "）";
+        document.getElementById("logArea").innerHTML = "";
+        connectStream(d.session_id);
+        document.querySelector('[data-tab="monitor"]').click();
+      } else {
+        document.getElementById("startStatus").textContent = "⚠️ 启动失败：" + JSON.stringify(d);
+      }
+    })
+    .catch(function(e){
+      document.getElementById("startingMsg").classList.add("hidden");
+      document.getElementById("startBtn").disabled = false;
+      document.getElementById("startStatus").textContent = "⚠️ 连接失败：" + e.message;
+    });
+}
+
+function connectStream(sid){
+  if(eventSource) eventSource.close();
+  eventSource = new EventSource(API + "/api/sandbox/stream?session_id=" + encodeURIComponent(sid));
+  eventSource.onmessage = function(ev){
+    try{
+      var item = JSON.parse(ev.data);
+      var area = document.getElementById("logArea");
+      if(item.type === "done"){
+        area.innerHTML += '<div class="log-item system">✅ 讨论完成，正在生成决策报告...</div>';
+        eventSource.close();
+        setTimeout(loadResult, 1500);
+        return;
+      }
+      var div = document.createElement("div");
+      if(item.type === "speech"){
+        div.className = "log-item speech";
+        div.innerHTML = '<div class="meta">' + esc(item.player||"") + ' · ' + esc(item.prototype_name||"") + ' · ' + esc(item.profession_name||"") + '</div>' + esc(item.message||"");
+      } else if(item.type === "round"){
+        div.className = "log-item round";
+        div.textContent = "📌 " + (item.message||"");
+      } else if(item.type === "system" && (item.message||"").indexOf("干预") >= 0){
+        div.className = "log-item intervention";
+        div.textContent = "🧠 " + (item.message||"");
+      } else {
+        div.className = "log-item system";
+        div.textContent = (item.message||"");
+      }
+      area.appendChild(div);
+      area.scrollTop = area.scrollHeight;
+    }catch(e){}
+  };
+}
+
+function loadResult(){
+  if(!currentSession) return;
+  fetch(API + "/api/sandbox/result/" + currentSession).then(function(r){return r.json();}).then(function(d){
+    if(d.status !== "done"){ setTimeout(loadResult, 3000); return; }
+    var box = document.getElementById("resultBox");
+    var sr = d.scenario_report || {};
+    var ev = d.evaluation || {};
+    var vr = d.v3_review || {};
+    var html = "";
+    // v3 五角色评审（正式评分）
+    if (vr["综合评分"]) {
+      html += '<div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px;">🧑‍⚖️ v3 五角色评审（双模型独立评分）</div>';
+      html += '<div class="dim-row">';
+      var v3dims = ["深度","广度","涌现度","实用性","分歧质量"];
+      v3dims.forEach(function(k){
+        var s = vr.scores && vr.scores[k];
+        if(s) html += '<div class="dim-box"><div class="v">'+s.score+'</div><div class="l">'+esc(k)+'（'+esc(s.role||"")+'）</div></div>';
+      });
+      html += '<div class="dim-box" style="border:1px solid var(--accent);"><div class="v">'+vr["综合评分"]+'</div><div class="l">综合评分</div></div>';
+      html += '</div>';
+      if (vr["真涌现"]) html += '<div style="font-size:12px;color:var(--accent2);margin-bottom:10px;">✨ 批评家判定：<b>真涌现</b>（出现了单一AI无法独立提出的可落地方案）</div>';
+      if (vr["审计综合评分"]) html += '<div style="font-size:12px;color:var(--dim);margin-bottom:6px;">🛡️ 审计员（GLM-4）：幻觉检测/信息密度/逻辑连贯性/透明性/可验证性 → 审计综合 <b style="color:var(--text);">'+vr["审计综合评分"]+'</b></div>';
+      if (vr["方法论综合评分"]) html += '<div style="font-size:12px;color:var(--dim);margin-bottom:14px;">🔬 方法论审计员：变量控制/样本量/统计方法/可重复性 → <b style="color:var(--text);">'+vr["方法论综合评分"]+'</b></div>';
+    }
+    // 场景化报告
+    html += '<div class="report-box">';
+    html += '<div style="font-size:15px;font-weight:700;color:var(--accent);margin-bottom:10px;">'+esc(sr.title||"决策预演报告")+'</div>';
+    var secs = sr.sections || {};
+    Object.keys(secs).forEach(function(k){
+      if(secs[k]) html += '<div style="margin-bottom:8px;"><b style="color:var(--primary);">'+esc(k)+'</b><br>'+esc(secs[k])+'</div>';
+    });
+    if(sr.use_hint) html += '<div style="font-size:12px;color:var(--dim);margin-top:10px;">'+esc(sr.use_hint)+'</div>';
+    html += '</div>';
+    // 主教练审计
+    if(d.coach_audit && d.coach_audit.length){
+      html += '<div style="margin-top:14px;"><b style="color:var(--warn);">🧠 主教练审计意见</b></div>';
+      d.coach_audit.forEach(function(a){
+        html += '<div style="font-size:12px;color:var(--dim);margin-top:6px;padding-left:10px;border-left:2px solid var(--warn);">'+esc(a)+'</div>';
+      });
+    }
+    box.innerHTML = html;
+    document.querySelector('[data-tab="result"]').click();
+  });
+}
+
+// 主教练对话
+function coachAsk(){
+  var input = document.getElementById("coachInput");
+  var msg = input.value.trim();
+  if(!msg) return;
+  var chat = document.getElementById("coachChat");
+  chat.innerHTML += '<div class="chat-msg user">🧑‍🎓 ' + esc(msg) + '</div>';
+  input.value = "";
+  chat.innerHTML += '<div class="chat-msg ai loading" id="coachLoading">主教练思考中...</div>';
+  fetch(API + "/api/coach/chat", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({message:msg})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var l = document.getElementById("coachLoading");
+      if(l) l.remove();
+      chat.innerHTML += '<div class="chat-msg ai">👨‍🏫 ' + esc(d.reply||"主教练无法回答") + '</div>';
+      chat.scrollTop = chat.scrollHeight;
+    })
+    .catch(function(e){
+      var l = document.getElementById("coachLoading");
+      if(l) l.remove();
+      chat.innerHTML += '<div class="chat-msg ai">⚠️ ' + esc(e.message) + '</div>';
+    });
+}
+
+loadPresets();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# ===== 群智 · 依赖清单 =====
+# 必装：核心运行（网关 + 讨论引擎 + 联网搜索）
+fastapi
+uvicorn
+pydantic
+requests
+
+# 可选：RAG 学术知识库（知网/arXiv 本地向量检索）
+# 安装后系统自动启用知识库检索；不装则自动降级为纯联网检索（功能不受影响）
+# 另需按 app/rag/models/README.txt 下载本地模型（约 1.2GB）
+# chromadb
+# rank-bm25
+# jieba
+# sentence-transformers
+# torch
+
+# 可选：工具脚本（素材生成等辅助，主系统不需要）
+# python-pptx
