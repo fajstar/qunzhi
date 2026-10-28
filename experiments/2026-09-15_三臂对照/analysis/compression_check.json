@@ -1,0 +1,85 @@
+{
+ "note": "零调用验证：components 与 report 覆盖度对比",
+ "rows": [
+  {
+   "run": "C2_T1_s1",
+   "arm": "C2",
+   "comp_dims": 6,
+   "comp_ent": 0.634,
+   "comp_chars": 15176,
+   "rep_dims": 6,
+   "rep_ent": 0.609,
+   "rep_chars": 4147
+  },
+  {
+   "run": "C2_T2_s1",
+   "arm": "C2",
+   "comp_dims": 6,
+   "comp_ent": 0.866,
+   "comp_chars": 13175,
+   "rep_dims": 6,
+   "rep_ent": 0.801,
+   "rep_chars": 3993
+  },
+  {
+   "run": "C2_T3_s1",
+   "arm": "C2",
+   "comp_dims": 6,
+   "comp_ent": 0.853,
+   "comp_chars": 13491,
+   "rep_dims": 4,
+   "rep_ent": 0.618,
+   "rep_chars": 2738
+  },
+  {
+   "run": "C2_T4_s1",
+   "arm": "C2",
+   "comp_dims": 6,
+   "comp_ent": 0.678,
+   "comp_chars": 15181,
+   "rep_dims": 5,
+   "rep_ent": 0.705,
+   "rep_chars": 4041
+  },
+  {
+   "run": "C3_T1_s1",
+   "arm": "C3",
+   "comp_dims": 6,
+   "comp_ent": 0.668,
+   "comp_chars": 11592,
+   "rep_dims": 6,
+   "rep_ent": 0.633,
+   "rep_chars": 4118
+  },
+  {
+   "run": "C3_T2_s1",
+   "arm": "C3",
+   "comp_dims": 6,
+   "comp_ent": 0.845,
+   "comp_chars": 12111,
+   "rep_dims": 6,
+   "rep_ent": 0.812,
+   "rep_chars": 3573
+  },
+  {
+   "run": "C3_T3_s1",
+   "arm": "C3",
+   "comp_dims": 6,
+   "comp_ent": 0.88,
+   "comp_chars": 10969,
+   "rep_dims": 4,
+   "rep_ent": 0.699,
+   "rep_chars": 3078
+  },
+  {
+   "run": "C3_T4_s1",
+   "arm": "C3",
+   "comp_dims": 6,
+   "comp_ent": 0.78,
+   "comp_chars": 10059,
+   "rep_dims": 4,
+   "rep_ent": 0.557,
+   "rep_chars": 4006
+  }
+ ]
+}

@@ -1,0 +1,732 @@
+{
+ "generated_at": "2026-09-16 19:46:32",
+ "per_run": [
+  {
+   "run_id": "A_T1_s1",
+   "arm": "A",
+   "topic_id": "T1",
+   "seed": 1,
+   "chars": 3717,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 9,
+    "教育学": 47,
+    "心理学": 10,
+    "管理学": 2,
+    "社会学": 5,
+    "经济学": 26
+   },
+   "entropy": 0.772,
+   "tokens": 44934,
+   "calls": 37,
+   "duration_s": 107.6
+  },
+  {
+   "run_id": "A_T1_s2",
+   "arm": "A",
+   "topic_id": "T1",
+   "seed": 2,
+   "chars": 2932,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 5,
+    "教育学": 27,
+    "心理学": 9,
+    "管理学": 6,
+    "社会学": 34,
+    "经济学": 25
+   },
+   "entropy": 0.876,
+   "tokens": 45426,
+   "calls": 37,
+   "duration_s": 103.8
+  },
+  {
+   "run_id": "A_T2_s1",
+   "arm": "A",
+   "topic_id": "T2",
+   "seed": 1,
+   "chars": 5594,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 14,
+    "教育学": 39,
+    "心理学": 12,
+    "管理学": 25,
+    "社会学": 21,
+    "经济学": 28
+   },
+   "entropy": 0.958,
+   "tokens": 44201,
+   "calls": 37,
+   "duration_s": 114.9
+  },
+  {
+   "run_id": "A_T2_s2",
+   "arm": "A",
+   "topic_id": "T2",
+   "seed": 2,
+   "chars": 3730,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 17,
+    "教育学": 41,
+    "心理学": 20,
+    "管理学": 15,
+    "社会学": 4,
+    "经济学": 29
+   },
+   "entropy": 0.909,
+   "tokens": 43731,
+   "calls": 37,
+   "duration_s": 105.3
+  },
+  {
+   "run_id": "A_T3_s1",
+   "arm": "A",
+   "topic_id": "T3",
+   "seed": 1,
+   "chars": 3471,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 19,
+    "教育学": 2,
+    "心理学": 6,
+    "管理学": 13,
+    "社会学": 2,
+    "经济学": 21
+   },
+   "entropy": 0.835,
+   "tokens": 43893,
+   "calls": 37,
+   "duration_s": 106.5
+  },
+  {
+   "run_id": "A_T3_s2",
+   "arm": "A",
+   "topic_id": "T3",
+   "seed": 2,
+   "chars": 3819,
+   "dims_covered": 5,
+   "dims": {
+    "计算机": 18,
+    "教育学": 6,
+    "心理学": 1,
+    "管理学": 27,
+    "经济学": 21
+   },
+   "entropy": 0.745,
+   "tokens": 47652,
+   "calls": 37,
+   "duration_s": 119.0
+  },
+  {
+   "run_id": "A_T4_s1",
+   "arm": "A",
+   "topic_id": "T4",
+   "seed": 1,
+   "chars": 3727,
+   "dims_covered": 5,
+   "dims": {
+    "计算机": 47,
+    "心理学": 3,
+    "管理学": 8,
+    "社会学": 1,
+    "经济学": 31
+   },
+   "entropy": 0.605,
+   "tokens": 45729,
+   "calls": 37,
+   "duration_s": 108.9
+  },
+  {
+   "run_id": "A_T4_s2",
+   "arm": "A",
+   "topic_id": "T4",
+   "seed": 2,
+   "chars": 4108,
+   "dims_covered": 4,
+   "dims": {
+    "计算机": 42,
+    "心理学": 1,
+    "管理学": 9,
+    "经济学": 54
+   },
+   "entropy": 0.538,
+   "tokens": 45027,
+   "calls": 37,
+   "duration_s": 106.6
+  },
+  {
+   "run_id": "B_T1_s1",
+   "arm": "B",
+   "topic_id": "T1",
+   "seed": 1,
+   "chars": 2695,
+   "dims_covered": 5,
+   "dims": {
+    "计算机": 16,
+    "教育学": 19,
+    "心理学": 4,
+    "管理学": 7,
+    "经济学": 6
+   },
+   "entropy": 0.808,
+   "tokens": 41170,
+   "calls": 37,
+   "duration_s": 95.0
+  },
+  {
+   "run_id": "B_T1_s2",
+   "arm": "B",
+   "topic_id": "T1",
+   "seed": 2,
+   "chars": 2984,
+   "dims_covered": 5,
+   "dims": {
+    "计算机": 30,
+    "教育学": 18,
+    "心理学": 2,
+    "管理学": 4,
+    "经济学": 17
+   },
+   "entropy": 0.735,
+   "tokens": 45941,
+   "calls": 37,
+   "duration_s": 106.5
+  },
+  {
+   "run_id": "B_T2_s1",
+   "arm": "B",
+   "topic_id": "T2",
+   "seed": 1,
+   "chars": 2874,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 13,
+    "教育学": 25,
+    "心理学": 3,
+    "管理学": 1,
+    "社会学": 2,
+    "经济学": 9
+   },
+   "entropy": 0.76,
+   "tokens": 41553,
+   "calls": 37,
+   "duration_s": 103.4
+  },
+  {
+   "run_id": "B_T2_s2",
+   "arm": "B",
+   "topic_id": "T2",
+   "seed": 2,
+   "chars": 3419,
+   "dims_covered": 4,
+   "dims": {
+    "计算机": 47,
+    "教育学": 25,
+    "管理学": 11,
+    "经济学": 10
+   },
+   "entropy": 0.664,
+   "tokens": 43543,
+   "calls": 37,
+   "duration_s": 108.0
+  },
+  {
+   "run_id": "B_T3_s1",
+   "arm": "B",
+   "topic_id": "T3",
+   "seed": 1,
+   "chars": 2709,
+   "dims_covered": 3,
+   "dims": {
+    "计算机": 3,
+    "管理学": 3,
+    "经济学": 8
+   },
+   "entropy": 0.547,
+   "tokens": 42668,
+   "calls": 37,
+   "duration_s": 105.4
+  },
+  {
+   "run_id": "B_T3_s2",
+   "arm": "B",
+   "topic_id": "T3",
+   "seed": 2,
+   "chars": 3763,
+   "dims_covered": 4,
+   "dims": {
+    "计算机": 21,
+    "管理学": 17,
+    "社会学": 2,
+    "经济学": 14
+   },
+   "entropy": 0.672,
+   "tokens": 43185,
+   "calls": 37,
+   "duration_s": 104.3
+  },
+  {
+   "run_id": "B_T4_s1",
+   "arm": "B",
+   "topic_id": "T4",
+   "seed": 1,
+   "chars": 3448,
+   "dims_covered": 3,
+   "dims": {
+    "计算机": 27,
+    "管理学": 3,
+    "经济学": 19
+   },
+   "entropy": 0.484,
+   "tokens": 44699,
+   "calls": 37,
+   "duration_s": 103.4
+  },
+  {
+   "run_id": "B_T4_s2",
+   "arm": "B",
+   "topic_id": "T4",
+   "seed": 2,
+   "chars": 4371,
+   "dims_covered": 4,
+   "dims": {
+    "计算机": 34,
+    "管理学": 2,
+    "社会学": 6,
+    "经济学": 1
+   },
+   "entropy": 0.385,
+   "tokens": 44130,
+   "calls": 37,
+   "duration_s": 107.8
+  },
+  {
+   "run_id": "C2_T1_s1",
+   "arm": "C2",
+   "topic_id": "T1",
+   "seed": 1,
+   "chars": 4147,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 14,
+    "教育学": 118,
+    "心理学": 20,
+    "管理学": 7,
+    "社会学": 6,
+    "经济学": 7
+   },
+   "entropy": 0.609,
+   "tokens": 16853,
+   "calls": 7,
+   "duration_s": 87.6
+  },
+  {
+   "run_id": "C2_T2_s1",
+   "arm": "C2",
+   "topic_id": "T2",
+   "seed": 1,
+   "chars": 3993,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 14,
+    "教育学": 54,
+    "心理学": 14,
+    "管理学": 14,
+    "社会学": 2,
+    "经济学": 10
+   },
+   "entropy": 0.801,
+   "tokens": 15143,
+   "calls": 7,
+   "duration_s": 75.6
+  },
+  {
+   "run_id": "C2_T3_s1",
+   "arm": "C2",
+   "topic_id": "T3",
+   "seed": 1,
+   "chars": 2738,
+   "dims_covered": 4,
+   "dims": {
+    "计算机": 14,
+    "教育学": 1,
+    "管理学": 10,
+    "经济学": 4
+   },
+   "entropy": 0.618,
+   "tokens": 15465,
+   "calls": 7,
+   "duration_s": 75.7
+  },
+  {
+   "run_id": "C2_T4_s1",
+   "arm": "C2",
+   "topic_id": "T4",
+   "seed": 1,
+   "chars": 4041,
+   "dims_covered": 5,
+   "dims": {
+    "计算机": 46,
+    "教育学": 5,
+    "心理学": 5,
+    "管理学": 14,
+    "经济学": 14
+   },
+   "entropy": 0.705,
+   "tokens": 17110,
+   "calls": 7,
+   "duration_s": 83.7
+  },
+  {
+   "run_id": "C3_T1_s1",
+   "arm": "C3",
+   "topic_id": "T1",
+   "seed": 1,
+   "chars": 4118,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 10,
+    "教育学": 131,
+    "心理学": 10,
+    "管理学": 7,
+    "社会学": 22,
+    "经济学": 15
+   },
+   "entropy": 0.633,
+   "tokens": 20013,
+   "calls": 13,
+   "duration_s": 84.9
+  },
+  {
+   "run_id": "C3_T2_s1",
+   "arm": "C3",
+   "topic_id": "T2",
+   "seed": 1,
+   "chars": 3573,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 27,
+    "教育学": 53,
+    "心理学": 10,
+    "管理学": 12,
+    "社会学": 13,
+    "经济学": 2
+   },
+   "entropy": 0.812,
+   "tokens": 19486,
+   "calls": 13,
+   "duration_s": 82.8
+  },
+  {
+   "run_id": "C3_T3_s1",
+   "arm": "C3",
+   "topic_id": "T3",
+   "seed": 1,
+   "chars": 3078,
+   "dims_covered": 4,
+   "dims": {
+    "计算机": 12,
+    "管理学": 12,
+    "社会学": 3,
+    "经济学": 18
+   },
+   "entropy": 0.699,
+   "tokens": 19402,
+   "calls": 13,
+   "duration_s": 79.4
+  },
+  {
+   "run_id": "C3_T4_s1",
+   "arm": "C3",
+   "topic_id": "T4",
+   "seed": 1,
+   "chars": 4006,
+   "dims_covered": 4,
+   "dims": {
+    "计算机": 83,
+    "心理学": 3,
+    "管理学": 25,
+    "经济学": 23
+   },
+   "entropy": 0.557,
+   "tokens": 19248,
+   "calls": 13,
+   "duration_s": 75.0
+  },
+  {
+   "run_id": "C_T1_s1",
+   "arm": "C",
+   "topic_id": "T1",
+   "seed": 1,
+   "chars": 3620,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 8,
+    "教育学": 101,
+    "心理学": 15,
+    "管理学": 6,
+    "社会学": 24,
+    "经济学": 22
+   },
+   "entropy": 0.734,
+   "tokens": 2239,
+   "calls": 1,
+   "duration_s": 15.1
+  },
+  {
+   "run_id": "C_T1_s2",
+   "arm": "C",
+   "topic_id": "T1",
+   "seed": 2,
+   "chars": 4089,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 4,
+    "教育学": 90,
+    "心理学": 8,
+    "管理学": 11,
+    "社会学": 4,
+    "经济学": 21
+   },
+   "entropy": 0.635,
+   "tokens": 2563,
+   "calls": 1,
+   "duration_s": 18.1
+  },
+  {
+   "run_id": "C_T2_s1",
+   "arm": "C",
+   "topic_id": "T2",
+   "seed": 1,
+   "chars": 4006,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 6,
+    "教育学": 60,
+    "心理学": 15,
+    "管理学": 14,
+    "社会学": 7,
+    "经济学": 18
+   },
+   "entropy": 0.813,
+   "tokens": 2455,
+   "calls": 1,
+   "duration_s": 17.5
+  },
+  {
+   "run_id": "C_T2_s2",
+   "arm": "C",
+   "topic_id": "T2",
+   "seed": 2,
+   "chars": 3758,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 12,
+    "教育学": 54,
+    "心理学": 19,
+    "管理学": 22,
+    "社会学": 12,
+    "经济学": 14
+   },
+   "entropy": 0.9,
+   "tokens": 2300,
+   "calls": 1,
+   "duration_s": 16.4
+  },
+  {
+   "run_id": "C_T3_s1",
+   "arm": "C",
+   "topic_id": "T3",
+   "seed": 1,
+   "chars": 4257,
+   "dims_covered": 5,
+   "dims": {
+    "计算机": 30,
+    "心理学": 3,
+    "管理学": 22,
+    "社会学": 8,
+    "经济学": 27
+   },
+   "entropy": 0.782,
+   "tokens": 2702,
+   "calls": 1,
+   "duration_s": 18.8
+  },
+  {
+   "run_id": "C_T3_s2",
+   "arm": "C",
+   "topic_id": "T3",
+   "seed": 2,
+   "chars": 3282,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 21,
+    "教育学": 1,
+    "心理学": 3,
+    "管理学": 11,
+    "社会学": 5,
+    "经济学": 23
+   },
+   "entropy": 0.806,
+   "tokens": 2079,
+   "calls": 1,
+   "duration_s": 14.1
+  },
+  {
+   "run_id": "C_T4_s1",
+   "arm": "C",
+   "topic_id": "T4",
+   "seed": 1,
+   "chars": 3404,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 37,
+    "教育学": 2,
+    "心理学": 4,
+    "管理学": 12,
+    "社会学": 5,
+    "经济学": 39
+   },
+   "entropy": 0.753,
+   "tokens": 2189,
+   "calls": 1,
+   "duration_s": 14.7
+  },
+  {
+   "run_id": "C_T4_s2",
+   "arm": "C",
+   "topic_id": "T4",
+   "seed": 2,
+   "chars": 4707,
+   "dims_covered": 6,
+   "dims": {
+    "计算机": 89,
+    "教育学": 1,
+    "心理学": 6,
+    "管理学": 14,
+    "社会学": 2,
+    "经济学": 53
+   },
+   "entropy": 0.621,
+   "tokens": 2971,
+   "calls": 1,
+   "duration_s": 19.1
+  }
+ ],
+ "by_arm": {
+  "A": {
+   "n": 8,
+   "chars": 3887.2,
+   "dims": 5.5,
+   "entropy": 0.78,
+   "tokens": 45074.0,
+   "duration": 109.1
+  },
+  "B": {
+   "n": 8,
+   "chars": 3282.9,
+   "dims": 4.25,
+   "entropy": 0.632,
+   "tokens": 43361.0,
+   "duration": 104.2
+  },
+  "C": {
+   "n": 8,
+   "chars": 3890.4,
+   "dims": 5.88,
+   "entropy": 0.756,
+   "tokens": 2437.0,
+   "duration": 16.7
+  }
+ },
+ "cross_arm_diff": [
+  {
+   "topic": "T1",
+   "seed": 1,
+   "A_B": 0.071,
+   "A_C": 0.083,
+   "B_C": 0.043
+  },
+  {
+   "topic": "T1",
+   "seed": 2,
+   "A_B": 0.074,
+   "A_C": 0.071,
+   "B_C": 0.044
+  },
+  {
+   "topic": "T2",
+   "seed": 1,
+   "A_B": 0.072,
+   "A_C": 0.078,
+   "B_C": 0.05
+  },
+  {
+   "topic": "T2",
+   "seed": 2,
+   "A_B": 0.076,
+   "A_C": 0.08,
+   "B_C": 0.054
+  },
+  {
+   "topic": "T3",
+   "seed": 1,
+   "A_B": 0.079,
+   "A_C": 0.064,
+   "B_C": 0.057
+  },
+  {
+   "topic": "T3",
+   "seed": 2,
+   "A_B": 0.09,
+   "A_C": 0.075,
+   "B_C": 0.068
+  },
+  {
+   "topic": "T4",
+   "seed": 1,
+   "A_B": 0.074,
+   "A_C": 0.077,
+   "B_C": 0.07
+  },
+  {
+   "topic": "T4",
+   "seed": 2,
+   "A_B": 0.068,
+   "A_C": 0.068,
+   "B_C": 0.056
+  }
+ ],
+ "cost_scaling": [
+  {
+   "label": "C1 单次调用（1 次）",
+   "n": 8,
+   "calls": 1,
+   "tokens": 2437,
+   "dims": 5.88,
+   "entropy": 0.756,
+   "eff": 2.4105
+  },
+  {
+   "label": "C2 六视角各一次（6 次）",
+   "n": 4,
+   "calls": 7,
+   "tokens": 16143,
+   "dims": 5.25,
+   "entropy": 0.683,
+   "eff": 0.3252
+  },
+  {
+   "label": "C3 六视角×2 含交叉质疑（12 次）",
+   "n": 4,
+   "calls": 13,
+   "tokens": 19537,
+   "dims": 5,
+   "entropy": 0.675,
+   "eff": 0.2559
+  }
+ ]
+}

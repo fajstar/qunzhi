@@ -1,0 +1,170 @@
+{
+ "experiment": "三臂对照实验",
+ "date": "2026-09-16 18:54:22",
+ "preregistration": "PREREGISTRATION.md",
+ "design": {
+  "arms": [
+   "A:6人格团队",
+   "B:6无人格同质副本",
+   "C:单模型多视角"
+  ],
+  "topics": [
+   "T1",
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "seeds": [
+   1,
+   2
+  ],
+  "runs_total": 24
+ },
+ "model": "deepseek-chat",
+ "runs": [
+  {
+   "run_id": "A_T1_s1",
+   "status": "ok",
+   "tokens": 44934,
+   "duration_s": 107.6
+  },
+  {
+   "run_id": "B_T1_s1",
+   "status": "ok",
+   "tokens": 41170,
+   "duration_s": 95.0
+  },
+  {
+   "run_id": "C_T1_s1",
+   "status": "ok",
+   "tokens": 2239,
+   "duration_s": 15.1
+  },
+  {
+   "run_id": "A_T1_s2",
+   "status": "ok",
+   "tokens": 45426,
+   "duration_s": 103.8
+  },
+  {
+   "run_id": "B_T1_s2",
+   "status": "ok",
+   "tokens": 45941,
+   "duration_s": 106.5
+  },
+  {
+   "run_id": "C_T1_s2",
+   "status": "ok",
+   "tokens": 2563,
+   "duration_s": 18.1
+  },
+  {
+   "run_id": "A_T2_s1",
+   "status": "ok",
+   "tokens": 44201,
+   "duration_s": 114.9
+  },
+  {
+   "run_id": "B_T2_s1",
+   "status": "ok",
+   "tokens": 41553,
+   "duration_s": 103.4
+  },
+  {
+   "run_id": "C_T2_s1",
+   "status": "ok",
+   "tokens": 2455,
+   "duration_s": 17.5
+  },
+  {
+   "run_id": "A_T2_s2",
+   "status": "ok",
+   "tokens": 43731,
+   "duration_s": 105.3
+  },
+  {
+   "run_id": "B_T2_s2",
+   "status": "ok",
+   "tokens": 43543,
+   "duration_s": 108.0
+  },
+  {
+   "run_id": "C_T2_s2",
+   "status": "ok",
+   "tokens": 2300,
+   "duration_s": 16.4
+  },
+  {
+   "run_id": "A_T3_s1",
+   "status": "ok",
+   "tokens": 43893,
+   "duration_s": 106.5
+  },
+  {
+   "run_id": "B_T3_s1",
+   "status": "ok",
+   "tokens": 42668,
+   "duration_s": 105.4
+  },
+  {
+   "run_id": "C_T3_s1",
+   "status": "ok",
+   "tokens": 2702,
+   "duration_s": 18.8
+  },
+  {
+   "run_id": "A_T3_s2",
+   "status": "ok",
+   "tokens": 47652,
+   "duration_s": 119.0
+  },
+  {
+   "run_id": "B_T3_s2",
+   "status": "ok",
+   "tokens": 43185,
+   "duration_s": 104.3
+  },
+  {
+   "run_id": "C_T3_s2",
+   "status": "ok",
+   "tokens": 2079,
+   "duration_s": 14.1
+  },
+  {
+   "run_id": "A_T4_s1",
+   "status": "ok",
+   "tokens": 45729,
+   "duration_s": 108.9
+  },
+  {
+   "run_id": "B_T4_s1",
+   "status": "ok",
+   "tokens": 44699,
+   "duration_s": 103.4
+  },
+  {
+   "run_id": "C_T4_s1",
+   "status": "ok",
+   "tokens": 2189,
+   "duration_s": 14.7
+  },
+  {
+   "run_id": "A_T4_s2",
+   "status": "ok",
+   "tokens": 45027,
+   "duration_s": 106.6
+  },
+  {
+   "run_id": "B_T4_s2",
+   "status": "ok",
+   "tokens": 44130,
+   "duration_s": 107.8
+  },
+  {
+   "run_id": "C_T4_s2",
+   "status": "ok",
+   "tokens": 2971,
+   "duration_s": 19.1
+  }
+ ]
+}

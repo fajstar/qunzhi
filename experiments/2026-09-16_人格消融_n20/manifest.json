@@ -1,0 +1,1010 @@
+{
+ "experiment": "人格消融实验 n=20 正式版",
+ "date": "2026-09-16 21:40:06",
+ "preregistration": "PREREGISTRATION.md",
+ "design": {
+  "arms": [
+   "E0_零异构",
+   "E1_产品默认",
+   "E2_仅原型",
+   "E3_仅专业",
+   "E4_仅价值观",
+   "E5_3人",
+   "E5b_6人"
+  ],
+  "topics": [
+   "T1",
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "runs_total": 140,
+  "n_per_arm": 20,
+  "order": "逐（题,种子）轮次，轮内打乱配置顺序（抗时间漂移）",
+  "negative_control": "E5b_6人 与 E1_产品默认 逐字相同"
+ },
+ "model": "deepseek-chat",
+ "runs": [
+  {
+   "run_id": "E3_仅专业_T1_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47142,
+   "duration_s": 111.1
+  },
+  {
+   "run_id": "E4_仅价值观_T1_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46107,
+   "duration_s": 114.9
+  },
+  {
+   "run_id": "E5b_6人_T1_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45512,
+   "duration_s": 107.7
+  },
+  {
+   "run_id": "E1_产品默认_T1_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43691,
+   "duration_s": 103.8
+  },
+  {
+   "run_id": "E0_零异构_T1_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45163,
+   "duration_s": 108.9
+  },
+  {
+   "run_id": "E2_仅原型_T1_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46678,
+   "duration_s": 104.4
+  },
+  {
+   "run_id": "E5_3人_T1_s1",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24963,
+   "duration_s": 75.4
+  },
+  {
+   "run_id": "E5_3人_T1_s2",
+   "status": "ok",
+   "players": 3,
+   "tokens": 27093,
+   "duration_s": 81.9
+  },
+  {
+   "run_id": "E3_仅专业_T1_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47965,
+   "duration_s": 112.7
+  },
+  {
+   "run_id": "E0_零异构_T1_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 41841,
+   "duration_s": 108.7
+  },
+  {
+   "run_id": "E2_仅原型_T1_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44347,
+   "duration_s": 108.0
+  },
+  {
+   "run_id": "E5b_6人_T1_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 49171,
+   "duration_s": 114.8
+  },
+  {
+   "run_id": "E4_仅价值观_T1_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45634,
+   "duration_s": 109.1
+  },
+  {
+   "run_id": "E5_3人_T1_s3",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24731,
+   "duration_s": 67.8
+  },
+  {
+   "run_id": "E2_仅原型_T1_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42238,
+   "duration_s": 97.7
+  },
+  {
+   "run_id": "E1_产品默认_T1_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42347,
+   "duration_s": 99.7
+  },
+  {
+   "run_id": "E4_仅价值观_T1_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43085,
+   "duration_s": 97.9
+  },
+  {
+   "run_id": "E3_仅专业_T1_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46209,
+   "duration_s": 108.9
+  },
+  {
+   "run_id": "E5b_6人_T1_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45940,
+   "duration_s": 104.2
+  },
+  {
+   "run_id": "E0_零异构_T1_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43441,
+   "duration_s": 98.2
+  },
+  {
+   "run_id": "E5b_6人_T1_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44579,
+   "duration_s": 99.4
+  },
+  {
+   "run_id": "E5_3人_T1_s4",
+   "status": "ok",
+   "players": 3,
+   "tokens": 25314,
+   "duration_s": 72.4
+  },
+  {
+   "run_id": "E0_零异构_T1_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45064,
+   "duration_s": 108.7
+  },
+  {
+   "run_id": "E4_仅价值观_T1_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43662,
+   "duration_s": 101.8
+  },
+  {
+   "run_id": "E2_仅原型_T1_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44134,
+   "duration_s": 101.3
+  },
+  {
+   "run_id": "E3_仅专业_T1_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47837,
+   "duration_s": 109.9
+  },
+  {
+   "run_id": "E1_产品默认_T1_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 41246,
+   "duration_s": 99.5
+  },
+  {
+   "run_id": "E3_仅专业_T1_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46356,
+   "duration_s": 103.6
+  },
+  {
+   "run_id": "E2_仅原型_T1_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43851,
+   "duration_s": 104.6
+  },
+  {
+   "run_id": "E5b_6人_T1_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 4058,
+   "duration_s": 179.6
+  },
+  {
+   "run_id": "E4_仅价值观_T1_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42321,
+   "duration_s": 144.0
+  },
+  {
+   "run_id": "E5_3人_T1_s5",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24667,
+   "duration_s": 69.8
+  },
+  {
+   "run_id": "E1_产品默认_T1_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43020,
+   "duration_s": 101.5
+  },
+  {
+   "run_id": "E0_零异构_T1_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44831,
+   "duration_s": 101.6
+  },
+  {
+   "run_id": "E0_零异构_T2_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43520,
+   "duration_s": 94.5
+  },
+  {
+   "run_id": "E4_仅价值观_T2_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46676,
+   "duration_s": 105.5
+  },
+  {
+   "run_id": "E1_产品默认_T2_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47915,
+   "duration_s": 78.9
+  },
+  {
+   "run_id": "E5_3人_T2_s1",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24381,
+   "duration_s": 51.6
+  },
+  {
+   "run_id": "E2_仅原型_T2_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46391,
+   "duration_s": 78.3
+  },
+  {
+   "run_id": "E5b_6人_T2_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 48607,
+   "duration_s": 84.5
+  },
+  {
+   "run_id": "E3_仅专业_T2_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46811,
+   "duration_s": 81.9
+  },
+  {
+   "run_id": "E5b_6人_T2_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43918,
+   "duration_s": 74.7
+  },
+  {
+   "run_id": "E3_仅专业_T2_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44151,
+   "duration_s": 78.1
+  },
+  {
+   "run_id": "E2_仅原型_T2_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45881,
+   "duration_s": 75.7
+  },
+  {
+   "run_id": "E5_3人_T2_s2",
+   "status": "ok",
+   "players": 3,
+   "tokens": 26128,
+   "duration_s": 59.0
+  },
+  {
+   "run_id": "E0_零异构_T2_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44509,
+   "duration_s": 78.1
+  },
+  {
+   "run_id": "E1_产品默认_T2_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47230,
+   "duration_s": 83.4
+  },
+  {
+   "run_id": "E4_仅价值观_T2_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44894,
+   "duration_s": 80.5
+  },
+  {
+   "run_id": "E4_仅价值观_T2_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44740,
+   "duration_s": 73.5
+  },
+  {
+   "run_id": "E0_零异构_T2_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42554,
+   "duration_s": 70.9
+  },
+  {
+   "run_id": "E3_仅专业_T2_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44186,
+   "duration_s": 76.8
+  },
+  {
+   "run_id": "E2_仅原型_T2_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47225,
+   "duration_s": 79.6
+  },
+  {
+   "run_id": "E5b_6人_T2_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43988,
+   "duration_s": 81.9
+  },
+  {
+   "run_id": "E5_3人_T2_s3",
+   "status": "ok",
+   "players": 3,
+   "tokens": 23807,
+   "duration_s": 50.8
+  },
+  {
+   "run_id": "E1_产品默认_T2_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47760,
+   "duration_s": 81.6
+  },
+  {
+   "run_id": "E0_零异构_T2_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47619,
+   "duration_s": 82.5
+  },
+  {
+   "run_id": "E1_产品默认_T2_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47696,
+   "duration_s": 88.7
+  },
+  {
+   "run_id": "E5_3人_T2_s4",
+   "status": "ok",
+   "players": 3,
+   "tokens": 25317,
+   "duration_s": 55.3
+  },
+  {
+   "run_id": "E5b_6人_T2_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47470,
+   "duration_s": 88.3
+  },
+  {
+   "run_id": "E2_仅原型_T2_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43799,
+   "duration_s": 73.6
+  },
+  {
+   "run_id": "E4_仅价值观_T2_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47095,
+   "duration_s": 79.8
+  },
+  {
+   "run_id": "E3_仅专业_T2_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43667,
+   "duration_s": 78.0
+  },
+  {
+   "run_id": "E1_产品默认_T2_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44908,
+   "duration_s": 76.7
+  },
+  {
+   "run_id": "E3_仅专业_T2_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45805,
+   "duration_s": 77.0
+  },
+  {
+   "run_id": "E5b_6人_T2_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47454,
+   "duration_s": 81.6
+  },
+  {
+   "run_id": "E0_零异构_T2_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43820,
+   "duration_s": 67.5
+  },
+  {
+   "run_id": "E2_仅原型_T2_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47227,
+   "duration_s": 78.7
+  },
+  {
+   "run_id": "E5_3人_T2_s5",
+   "status": "ok",
+   "players": 3,
+   "tokens": 23539,
+   "duration_s": 49.0
+  },
+  {
+   "run_id": "E4_仅价值观_T2_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43814,
+   "duration_s": 63.0
+  },
+  {
+   "run_id": "E1_产品默认_T3_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46846,
+   "duration_s": 74.9
+  },
+  {
+   "run_id": "E2_仅原型_T3_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44857,
+   "duration_s": 70.2
+  },
+  {
+   "run_id": "E0_零异构_T3_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47194,
+   "duration_s": 78.4
+  },
+  {
+   "run_id": "E4_仅价值观_T3_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 48154,
+   "duration_s": 72.8
+  },
+  {
+   "run_id": "E5b_6人_T3_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 48380,
+   "duration_s": 75.0
+  },
+  {
+   "run_id": "E3_仅专业_T3_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46225,
+   "duration_s": 73.9
+  },
+  {
+   "run_id": "E5_3人_T3_s1",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24696,
+   "duration_s": 50.2
+  },
+  {
+   "run_id": "E4_仅价值观_T3_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43552,
+   "duration_s": 72.2
+  },
+  {
+   "run_id": "E3_仅专业_T3_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44741,
+   "duration_s": 71.7
+  },
+  {
+   "run_id": "E5_3人_T3_s2",
+   "status": "ok",
+   "players": 3,
+   "tokens": 23135,
+   "duration_s": 45.5
+  },
+  {
+   "run_id": "E1_产品默认_T3_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45782,
+   "duration_s": 73.7
+  },
+  {
+   "run_id": "E5b_6人_T3_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43564,
+   "duration_s": 72.9
+  },
+  {
+   "run_id": "E2_仅原型_T3_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44114,
+   "duration_s": 68.5
+  },
+  {
+   "run_id": "E0_零异构_T3_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43833,
+   "duration_s": 66.0
+  },
+  {
+   "run_id": "E5b_6人_T3_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44698,
+   "duration_s": 73.1
+  },
+  {
+   "run_id": "E3_仅专业_T3_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43704,
+   "duration_s": 72.9
+  },
+  {
+   "run_id": "E2_仅原型_T3_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45853,
+   "duration_s": 76.0
+  },
+  {
+   "run_id": "E5_3人_T3_s3",
+   "status": "ok",
+   "players": 3,
+   "tokens": 25192,
+   "duration_s": 48.2
+  },
+  {
+   "run_id": "E4_仅价值观_T3_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46225,
+   "duration_s": 69.3
+  },
+  {
+   "run_id": "E1_产品默认_T3_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42337,
+   "duration_s": 68.4
+  },
+  {
+   "run_id": "E0_零异构_T3_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42444,
+   "duration_s": 69.4
+  },
+  {
+   "run_id": "E3_仅专业_T3_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44525,
+   "duration_s": 76.3
+  },
+  {
+   "run_id": "E0_零异构_T3_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43313,
+   "duration_s": 73.5
+  },
+  {
+   "run_id": "E4_仅价值观_T3_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46220,
+   "duration_s": 72.8
+  },
+  {
+   "run_id": "E2_仅原型_T3_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45324,
+   "duration_s": 75.7
+  },
+  {
+   "run_id": "E5b_6人_T3_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46373,
+   "duration_s": 77.6
+  },
+  {
+   "run_id": "E5_3人_T3_s4",
+   "status": "ok",
+   "players": 3,
+   "tokens": 25234,
+   "duration_s": 55.7
+  },
+  {
+   "run_id": "E1_产品默认_T3_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45641,
+   "duration_s": 80.0
+  },
+  {
+   "run_id": "E3_仅专业_T3_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44041,
+   "duration_s": 76.7
+  },
+  {
+   "run_id": "E0_零异构_T3_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44668,
+   "duration_s": 76.3
+  },
+  {
+   "run_id": "E5_3人_T3_s5",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24969,
+   "duration_s": 55.6
+  },
+  {
+   "run_id": "E1_产品默认_T3_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44904,
+   "duration_s": 76.2
+  },
+  {
+   "run_id": "E4_仅价值观_T3_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46166,
+   "duration_s": 78.8
+  },
+  {
+   "run_id": "E5b_6人_T3_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46867,
+   "duration_s": 76.1
+  },
+  {
+   "run_id": "E2_仅原型_T3_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47157,
+   "duration_s": 77.8
+  },
+  {
+   "run_id": "E3_仅专业_T4_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46048,
+   "duration_s": 79.1
+  },
+  {
+   "run_id": "E1_产品默认_T4_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46067,
+   "duration_s": 82.3
+  },
+  {
+   "run_id": "E0_零异构_T4_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43800,
+   "duration_s": 77.6
+  },
+  {
+   "run_id": "E2_仅原型_T4_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44920,
+   "duration_s": 71.9
+  },
+  {
+   "run_id": "E5_3人_T4_s1",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24605,
+   "duration_s": 49.6
+  },
+  {
+   "run_id": "E4_仅价值观_T4_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44723,
+   "duration_s": 77.2
+  },
+  {
+   "run_id": "E5b_6人_T4_s1",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42291,
+   "duration_s": 70.8
+  },
+  {
+   "run_id": "E0_零异构_T4_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43612,
+   "duration_s": 69.2
+  },
+  {
+   "run_id": "E5_3人_T4_s2",
+   "status": "ok",
+   "players": 3,
+   "tokens": 23488,
+   "duration_s": 51.3
+  },
+  {
+   "run_id": "E5b_6人_T4_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46368,
+   "duration_s": 79.9
+  },
+  {
+   "run_id": "E2_仅原型_T4_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47147,
+   "duration_s": 76.5
+  },
+  {
+   "run_id": "E3_仅专业_T4_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43804,
+   "duration_s": 72.7
+  },
+  {
+   "run_id": "E4_仅价值观_T4_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44689,
+   "duration_s": 74.4
+  },
+  {
+   "run_id": "E1_产品默认_T4_s2",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45558,
+   "duration_s": 80.1
+  },
+  {
+   "run_id": "E3_仅专业_T4_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 44779,
+   "duration_s": 74.8
+  },
+  {
+   "run_id": "E1_产品默认_T4_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 43966,
+   "duration_s": 75.4
+  },
+  {
+   "run_id": "E4_仅价值观_T4_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42385,
+   "duration_s": 73.7
+  },
+  {
+   "run_id": "E0_零异构_T4_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45922,
+   "duration_s": 73.5
+  },
+  {
+   "run_id": "E5b_6人_T4_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45652,
+   "duration_s": 75.4
+  },
+  {
+   "run_id": "E5_3人_T4_s3",
+   "status": "ok",
+   "players": 3,
+   "tokens": 25557,
+   "duration_s": 50.8
+  },
+  {
+   "run_id": "E2_仅原型_T4_s3",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46334,
+   "duration_s": 75.5
+  },
+  {
+   "run_id": "E4_仅价值观_T4_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45573,
+   "duration_s": 73.7
+  },
+  {
+   "run_id": "E1_产品默认_T4_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 48343,
+   "duration_s": 84.8
+  },
+  {
+   "run_id": "E5_3人_T4_s4",
+   "status": "ok",
+   "players": 3,
+   "tokens": 25318,
+   "duration_s": 53.7
+  },
+  {
+   "run_id": "E5b_6人_T4_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45621,
+   "duration_s": 82.5
+  },
+  {
+   "run_id": "E3_仅专业_T4_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42084,
+   "duration_s": 74.7
+  },
+  {
+   "run_id": "E2_仅原型_T4_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47044,
+   "duration_s": 78.0
+  },
+  {
+   "run_id": "E0_零异构_T4_s4",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42670,
+   "duration_s": 75.4
+  },
+  {
+   "run_id": "E3_仅专业_T4_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42699,
+   "duration_s": 73.4
+  },
+  {
+   "run_id": "E5_3人_T4_s5",
+   "status": "ok",
+   "players": 3,
+   "tokens": 24039,
+   "duration_s": 52.1
+  },
+  {
+   "run_id": "E1_产品默认_T4_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 46756,
+   "duration_s": 79.2
+  },
+  {
+   "run_id": "E2_仅原型_T4_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45593,
+   "duration_s": 79.4
+  },
+  {
+   "run_id": "E5b_6人_T4_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 45616,
+   "duration_s": 80.4
+  },
+  {
+   "run_id": "E4_仅价值观_T4_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 47027,
+   "duration_s": 78.4
+  },
+  {
+   "run_id": "E0_零异构_T4_s5",
+   "status": "ok",
+   "players": 6,
+   "tokens": 42104,
+   "duration_s": 71.7
+  }
+ ],
+ "updated": "2026-09-17 00:07:42"
+}

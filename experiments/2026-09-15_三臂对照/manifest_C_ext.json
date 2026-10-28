@@ -1,0 +1,58 @@
+{
+ "experiment": "臂C 算力递增对照",
+ "date": "2026-09-16 19:25:36",
+ "design": {
+  "arms": [
+   "C2(6视角×1)",
+   "C3(6视角×2)"
+  ],
+  "topics": [
+   "T1",
+   "T2",
+   "T3",
+   "T4"
+  ]
+ },
+ "runs": [
+  {
+   "run_id": "C2_T1_s1",
+   "status": "ok",
+   "tokens": 16853
+  },
+  {
+   "run_id": "C3_T1_s1",
+   "status": "ok",
+   "tokens": 20013
+  },
+  {
+   "run_id": "C2_T2_s1",
+   "status": "ok",
+   "tokens": 15143
+  },
+  {
+   "run_id": "C3_T2_s1",
+   "status": "ok",
+   "tokens": 19486
+  },
+  {
+   "run_id": "C2_T3_s1",
+   "status": "ok",
+   "tokens": 15465
+  },
+  {
+   "run_id": "C3_T3_s1",
+   "status": "ok",
+   "tokens": 19402
+  },
+  {
+   "run_id": "C2_T4_s1",
+   "status": "ok",
+   "tokens": 17110
+  },
+  {
+   "run_id": "C3_T4_s1",
+   "status": "ok",
+   "tokens": 19248
+  }
+ ]
+}

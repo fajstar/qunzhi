@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>人格消融实验报告</title><style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+max-width:860px;margin:0 auto;padding:14px;line-height:1.8;color:#1a1a1a;font-size:16px;
+-webkit-text-size-adjust:100%;word-wrap:break-word;overflow-wrap:break-word}
+h1{font-size:21px;border-bottom:3px solid #2563EB;padding-bottom:8px;margin-top:8px}
+h2{font-size:18px;color:#1e40af;border-left:4px solid #2563EB;padding-left:8px;margin-top:26px}
+h3{font-size:16px;color:#1f2937;margin-top:20px}
+h4{font-size:15px;color:#374151}
+blockquote{border-left:4px solid #93c5fd;background:#f8fafc;margin:10px 0;padding:8px 12px;
+color:#374151;font-size:15px}
+/* 表格：宽度自适应 + 允许换行，手机上不用左右拖 */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0}
+table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5px;line-height:1.5}
+th,td{border:1px solid #d1d5db;padding:4px 5px;text-align:left;vertical-align:top;
+word-break:break-word;overflow-wrap:anywhere}
+th{background:#eff6ff;font-weight:700}
+tbody tr:nth-child(even) td{background:#fafafa}
+code{background:#f3f4f6;padding:1px 4px;border-radius:3px;font-size:14px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid #e5e7eb;margin:22px 0}
+b{color:#0f172a}
+</style></head><body>
+<h1>人格消融 n=20 · 结果解读</h1>
+
+<blockquote>t; 实验：7 配置 × 4 题 × 5 种子 = <b>140 次</b>，5,874,716 token，约 <b>¥19.97</b></blockquote>
+<blockquote>t; 跑法：配对分块（同一题同一种子内比配置，消掉题目和种子的影响）</blockquote>
+<blockquote>t; 判定规则跑前写定在 <code>PREREGISTRATION.md</code>，跑后未修改</blockquote>
+
+<hr>
+
+<h2>一、先说最要紧的一句话</h2>
+
+<p>**&quot;成员之间必须有差异&quot;这件事，被第二个独立实验再次证实了。</p>
+<p>但&quot;六个 agent&quot;里到底哪一层差异在起作用 —— 答案和产品现在的设计不太一样。**</p>
+
+<hr>
+
+<h2>二、可信度先过关（阴性对照）</h2>
+
+<p>E5b 和 E1 是<b>逐字相同</b>的配置（同一个东西跑两遍，分别占一个&quot;组&quot;）。</p>
+
+<div class='tw'><table><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>配对轮次</td><td>20</td></tr><tr><td>E1 均值</td><td>5.65</td></tr><tr><td>E5b 均值</td><td>5.65</td></tr><tr><td>配对差分</td><td><b>+0.000</b></td></tr><tr><td>p 值</td><td><b>1.0000</b></td></tr><tr><td>判定</td><td>□ 通过</td></tr></tbody></table></div>
+
+<p>两个一模一样的东西，测出来一模一样。<b>说明这套实验分辨得出真差异，后面的话可以信。</b></p>
+
+<hr>
+
+<h2>三、最硬的结论：把 6 个人变得一模一样，产出明显变差</h2>
+
+<div class='tw'><table><thead><tr><th></th><th>视角覆盖（6 维）</th><th>与产品默认的差</th><th>p</th><th>效应量</th></tr></thead><tbody><tr><td><b>E0 零异构</b>（6 人完全同配置）</td><td><b>4.60</b></td><td><b>−1.05 维</b></td><td><b>0.0012</b></td><td>dz <b>−0.99（大）</b></td></tr><tr><td>E1 产品默认（=主实验臂A）</td><td>5.65</td><td>——</td><td>——</td><td>——</td></tr></tbody></table></div>
+
+<p>**主实验（三臂对照）当时测出臂A vs 臂B 是 p=0.015、d=1.38；</p>
+<p>这次独立重测是 p=0.0012、dz=−0.99。两个实验独立、方向一致、都显著。**</p>
+
+<p>→ 这是本项目目前<b>证据最硬的一条</b>：<code>成员必须异构</code> 不是设计者的偏好，是有数据的。</p>
+
+<hr>
+
+<h2>四、归因：从&quot;零异构&quot;出发，只加一维差异，各能加多少</h2>
+
+<p>这一节是本次最有价值的产出。<b>E0（6 人全同）与各&quot;仅一维差异&quot;配置之间只差一个变量</b>，</p>
+<p>所以差值就是那一维的净贡献。</p>
+
+<div class='tw'><table><thead><tr><th>相对 E0 只加这一维差异</th><th>覆盖数增量</th><th>p</th><th>决策要素增量</th><th>p</th><th>判定</th></tr></thead><tbody><tr><td>只加「认知原型」</td><td>−0.10</td><td>0.6493</td><td>+0.25</td><td>0.1713</td><td><b>两个都不显著 → 未检出贡献</b></td></tr><tr><td>只加「专业背景」</td><td><b>+0.85</b></td><td><b>0.0034</b></td><td>−0.10</td><td>0.6493</td><td><b>方向相反 → 存疑</b></td></tr><tr><td>只加「价值观」</td><td><b>+0.70</b></td><td><b>0.0018</b></td><td>+0.40</td><td>0.1189</td><td><b>两个都为正 → 真实贡献</b></td></tr></tbody></table></div>
+
+<h3>怎么看这张表</h3>
+
+<p>我一开始就预埋了两个指标，就是为了防这种情况：</p>
+
+<li><b>视角覆盖数</b> —— 数输出里出现了几个学科的词。<b>天生偏袒&quot;专业&quot;维度</b>，</li>
+<p>  因为词表是按学科列的，专业配得越散，学科名词自然越多。</p>
+<li><b>决策要素完备度</b> —— 数报告里有没有「核心判断 / 行动方案 / 风险提示 / 易忽略角度 / 时间维度 / 量化表述」。</li>
+<p>  <b>这个与专业无关</b>，不会被学科名词带偏。</p>
+
+<p><b>&quot;专业背景&quot;这一行，两个指标给出相反答案</b>：覆盖数涨了 0.85（显著），</p>
+<p>决策要素却 −0.10。这正是&quot;覆盖数在偏袒它&quot;的典型特征 ——</p>
+<p><b>六个人专业不同，报告里当然会多出几个学科名词，但这不等于报告更有用。</b></p>
+
+<p><b>&quot;价值观&quot;这一行是唯一两个指标都不掉分的</b>（覆盖 +0.70 显著、决策要素 +0.40 正但不显著）。</p>
+<p>→ <b>价值观差异是这次实验里最站得住的那个维度。</b></p>
+
+<p><b>&quot;认知原型&quot;这一行两个都不显著</b> → 未检出贡献。</p>
+<p>⚠️ 注意：<b>&quot;未检出&quot;不等于&quot;无效&quot;</b>（n=20 只能检出 ≥1 维的差异），但对产品来说，</p>
+<p><b>没有证据支持为了 7 种认知原型去增加复杂度。</b></p>
+
+<hr>
+
+<h2>五、人数：3 人能省 45%，但不能说&quot;可以替代 6 人&quot;</h2>
+
+<div class='tw'><table><thead><tr><th></th><th>3 人（E5）</th><th>6 人（基线）</th><th>差</th></tr></thead><tbody><tr><td>token/次</td><td><b>24,809</b></td><td>45,243</td><td><b>省 45%</b></td></tr><tr><td>视角覆盖</td><td>5.00</td><td>5.65</td><td>−0.65</td></tr><tr><td>决策要素</td><td>4.50</td><td>4.70</td><td>−0.15</td></tr><tr><td>Holm p</td><td>——</td><td>——</td><td><b>0.0610（未达显著）</b></td></tr><tr><td>等价检验</td><td>——</td><td>——</td><td><b>未通过</b></td></tr></tbody></table></div>
+
+<p><b>这里必须说清楚</b>：p=0.061 是&quot;没找到显著差异&quot;，<b>不是&quot;证明了没有差异&quot;</b>。</p>
+<p>等价检验没通过，说明<b>现有数据不能判定 3 人等于 6 人</b>。</p>
+
+<p>→ 所以<b>不能对外宣称&quot;3 人可以替代 6 人&quot;</b>。要么再补样本，要么承认这是风险。</p>
+
+<hr>
+
+<h2>六、对本次指标的一记自我批评（必须一起看）</h2>
+
+<div class='tw'><table><thead><tr><th>变量</th><th>对&quot;视角覆盖数&quot;的影响幅度</th></tr></thead><tbody><tr><td><b>题目</b>（T1 5.86 ↔ T3 4.49）</td><td><b>1.37 维</b></td></tr><tr><td><b>配置</b>（E0 4.60 ↔ E1 5.65）</td><td><b>1.15 维</b></td></tr></tbody></table></div>
+
+<p><b>题目造成的影响比配置还大。</b> 说明这个指标主要在被&quot;问了什么问题&quot;驱动，</p>
+<p>配置的影响相对小。这是本次采用<b>分块配对</b>的原因，也是所有基于覆盖数的结论都要打折扣的原因。</p>
+
+<p><b>换句话说：覆盖数这个指标本身不够灵敏。</b> 真正要回答&quot;决策质量好不好&quot;，</p>
+<p>只能靠人类盲评 —— 这一步还没做。</p>
+
+<hr>
+
+<h2>七、所以产品该改什么</h2>
+
+<div class='tw'><table><thead><tr><th>结论</th><th>依据</th><th>建议动作</th></tr></thead><tbody><tr><td><b>成员必须异构</b></td><td>E0 vs 基线 −1.05 维，p=0.0012，两实验互证</td><td>□ 保留，且这是核心卖点之一</td></tr><tr><td><b>价值观维度要保留</b></td><td>唯一两个指标都不掉分的维度</td><td>□ 保留</td></tr><tr><td><b>专业维度存疑</b></td><td>覆盖数涨、决策要素跌，疑似指标偏袒</td><td>□ 保留代码，但<b>不当作优势主张</b></td></tr><tr><td><b>认知原型可简化</b></td><td>单独存在时未检出贡献</td><td>□ 考虑砍掉 7 种原型的复杂度（但先别删，未检出≠无效）</td></tr><tr><td><b>不能砍到 3 人</b></td><td>等价检验未通过</td><td>□ 维持 6 人，或补样本再定</td></tr><tr><td><b>不能声称覆盖数=质量</b></td><td>题目影响 &gt; 配置影响</td><td>□ 材料里如实写清指标局限</td></tr></tbody></table></div>
+
+<hr>
+
+<h2>八、与主实验合起来看</h2>
+
+<div class='tw'><table><thead><tr><th>实验</th><th>对比</th><th>结果</th></tr></thead><tbody><tr><td>三臂对照（n=8）</td><td>6 人异构 vs 6 人同质</td><td>p=0.015，d=<b>+1.38</b></td></tr><tr><td>人格消融（n=20）</td><td>6 人异构 vs 6 人同质（E0）</td><td>p=<b>0.0012</b>，dz=<b>−0.99</b></td></tr><tr><td>三臂对照（n=8）</td><td>6 人团队 vs 单模型多视角</td><td>p=0.224，TOST 判定<b>等价</b></td></tr><tr><td>三臂对照（n=8）</td><td>成本</td><td>差 <b>18.5 倍</b></td></tr></tbody></table></div>
+
+<p><b>合起来是这样一个故事</b>：</p>
+<blockquote>t; **&quot;要让成员不一样&quot;是真的有用（两个实验都证实）；</blockquote>
+<blockquote>t; 但&quot;必须养 6 个 agent&quot;没必要（单模型多视角 1/18 成本就等价）。</blockquote>
+<blockquote>t; 在&quot;人格&quot;内部，真正起作用的是价值观差异，不是认知原型数量。**</blockquote>
+
+<hr>
+<p>*群智 · 人格消融 n=20 解读 · 2026-09-17*</p>
+
+<hr>
+
+<h1>附录 · 机械报告（脚本自动生成，未加人工解读）</h1>
+
+<blockquote>t; 下面是分析脚本按预注册规则直接输出的结果，与上文是同一批数据的两种呈现。</blockquote>
+<blockquote>t; 上文是「人话解读」，这里保留原始措辞，便于核对。</blockquote>
+
+<blockquote>t; 生成时间 2026-09-17 10:26 ｜ 已跑 <b>140/140</b> 次（<b>全部完成</b>）</blockquote>
+<blockquote>t; 设计见 <code>PREREGISTRATION.md</code>（跑前写定，判定规则不因结果修改）</blockquote>
+
+<h2>一、结论（机械套用预注册规则，无人工挑选）</h2>
+
+<li>✅ 阴性对照通过：同一配置两次测量无显著差异（配对差分 +0.000，p=1.0000）→ 可解释配置结果</li>
+<li>🔻 <b>认知原型</b>：单独保留它仍比基线低 1.15 维（Holm p=0.0001）→ 该维度单独<b>不足</b></li>
+<li>✅ <b>专业背景</b>：单独保留它即可追平基线（差分 -0.20，TOST p=0.000）→ 该维度<b>单独足够</b></li>
+<li>✅ <b>价值观</b>：单独保留它即可追平基线（差分 -0.35，TOST p=0.000）→ 该维度<b>单独足够</b></li>
+<li>📉 <b>零异构地板</b>：6 人完全相同时视角覆盖比基线低 1.05 维（Holm p=0.0012）→ 差异本身<b>是</b>有效应还是没效应，看这一行</li>
+<li>❔ <b>3 人：未检出差异</b>（Holm p=0.0610，差分 -0.65），token 省 45% → 需更大样本才能定论</li>
+
+<h2>二、各配置实测</h2>
+
+<div class='tw'><table><thead><tr><th>配置</th><th>异构水平</th><th>n</th><th>视角覆盖</th><th>决策要素</th><th>均衡度</th><th>字数</th><th>token/次</th><th>耗时</th></tr></thead><tbody><tr><td>E0_零异构</td><td>0 维（6人全同）</td><td>20</td><td><b>4.6</b>（±1.27）</td><td>4.3</td><td>0.671</td><td>3,446</td><td>44,096</td><td>82.5s</td></tr><tr><td>E1_产品默认</td><td>3 维（产品默认）</td><td>20</td><td><b>5.65</b>（±0.75）</td><td>4.7</td><td>0.839</td><td>3,639</td><td>45,243</td><td>84.8s</td></tr><tr><td>E2_仅原型</td><td>1 维（仅原型）</td><td>20</td><td><b>4.5</b>（±1.19）</td><td>4.55</td><td>0.672</td><td>3,606</td><td>45,506</td><td>82.6s</td></tr><tr><td>E3_仅专业</td><td>1 维（仅专业）</td><td>20</td><td><b>5.45</b>（±0.83）</td><td>4.2</td><td>0.787</td><td>3,769</td><td>45,139</td><td>84.2s</td></tr><tr><td>E4_仅价值观</td><td>1 维（仅价值观）</td><td>20</td><td><b>5.3</b>（±0.8）</td><td>4.7</td><td>0.746</td><td>3,840</td><td>45,137</td><td>85.7s</td></tr><tr><td>E5_3人</td><td>3 维 / 3 人</td><td>20</td><td><b>5</b>（±1.03）</td><td>4.5</td><td>0.734</td><td>3,119</td><td>24,809</td><td>57.3s</td></tr><tr><td>E5b_6人</td><td>3 维（同E1）</td><td>20</td><td><b>5.65</b>（±0.49）</td><td>4.6</td><td>0.831</td><td>3,464</td><td>43,806</td><td>89.0s</td></tr></tbody></table></div>
+
+<blockquote>t; 视角覆盖数量纲 0~6（命中的专业维度数）；决策要素 0~6（<b>与专业无关</b>，用来交叉验证）</blockquote>
+
+<h2>三、配对分块比较（各配置 vs 基线）</h2>
+
+<p>同一（题,种子）轮次内配对，差值已消掉题目与种子带来的方差。</p>
+
+<div class='tw'><table><thead><tr><th>配置</th><th>指标</th><th>差分</th><th>95%CI</th><th>Holm p</th><th>效应量 dz</th><th>TOST</th></tr></thead><tbody><tr><td>E0_零异构</td><td>视角覆盖</td><td>-1.05</td><td>[-1.52, -0.58]</td><td>0.0012</td><td>-0.99</td><td>—</td></tr><tr><td>E0_零异构</td><td>决策要素</td><td>-0.35</td><td>[-0.77, +0.07]</td><td>0.4794</td><td>-0.36</td><td>等价</td></tr><tr><td>E2_仅原型</td><td>视角覆盖</td><td>-1.15</td><td>[-1.55, -0.75]</td><td>0.0001</td><td>-1.25</td><td>—</td></tr><tr><td>E2_仅原型</td><td>决策要素</td><td>-0.10</td><td>[-0.46, +0.26]</td><td>1.0000</td><td>-0.12</td><td>等价</td></tr><tr><td>E3_仅专业</td><td>视角覆盖</td><td>-0.20</td><td>[-0.57, +0.17]</td><td>0.3054</td><td>-0.24</td><td>等价</td></tr><tr><td>E3_仅专业</td><td>决策要素</td><td>-0.45</td><td>[-0.77, -0.13]</td><td>0.0595</td><td>-0.62</td><td>等价</td></tr><tr><td>E4_仅价值观</td><td>视角覆盖</td><td>-0.35</td><td>[-0.64, -0.06]</td><td>0.0531</td><td>-0.54</td><td>等价</td></tr><tr><td>E4_仅价值观</td><td>决策要素</td><td>+0.05</td><td>[-0.25, +0.35]</td><td>0.7481</td><td>+0.07</td><td>等价</td></tr><tr><td>E5_3人</td><td>视角覆盖</td><td>-0.65</td><td>[-1.15, -0.15]</td><td>0.0610</td><td>-0.57</td><td>—</td></tr><tr><td>E5_3人</td><td>决策要素</td><td>-0.15</td><td>[-0.49, +0.19]</td><td>1.0000</td><td>-0.19</td><td>等价</td></tr></tbody></table></div>
+
+<h3>三补、归因：从「零异构」出发，每一维差异各自加了多少</h3>
+
+<p>上节是「每个配置 vs 产品基线」，但那样看不出「哪一维在起作用」。</p>
+<p>这里换成<b>正确的归因对比</b>：以 <b>E0（6 人完全相同）</b> 为起点，</p>
+<p>看「只加某一维差异」能提升多少。E0 与各「仅一维」配置之间<b>只差那一个变量</b>。</p>
+
+<div class='tw'><table><thead><tr><th>相对 E0 只加这一维</th><th>覆盖数增量</th><th>p</th><th>dz</th><th>决策要素增量</th><th>p</th><th>dz</th></tr></thead><tbody><tr><td>只加「认知原型」差异</td><td>-0.10</td><td>0.6493</td><td>-0.10</td><td>+0.25</td><td>0.1713</td><td>+0.32</td></tr></tbody></table></div>
+
+<div class='tw'><table><thead><tr><th>相对 E0 只加这一维</th><th>覆盖数增量</th><th>p</th><th>dz</th><th>决策要素增量</th><th>p</th><th>dz</th></tr></thead><tbody><tr><td>只加「专业背景」差异</td><td>+0.85</td><td>0.0034</td><td>+0.75</td><td>-0.10</td><td>0.6493</td><td>-0.10</td></tr></tbody></table></div>
+
+<div class='tw'><table><thead><tr><th>相对 E0 只加这一维</th><th>覆盖数增量</th><th>p</th><th>dz</th><th>决策要素增量</th><th>p</th><th>dz</th></tr></thead><tbody><tr><td>只加「价值观」差异</td><td>+0.70</td><td>0.0018</td><td>+0.81</td><td>+0.40</td><td>0.1189</td><td>+0.37</td></tr></tbody></table></div>
+
+<blockquote>t; 读法：<b>两个指标都为正</b>才说明这一维真的有用；只有一个指标为正、另一个为负，</blockquote>
+<blockquote>t; 说明是那个指标在偏袒它，不是它真的有用。</blockquote>
+
+<p><b>交叉验证结论：</b></p>
+
+<li><b>认知原型</b>：覆盖 -0.10（p=0.6493）、决策要素 +0.25（p=0.1713）—— 方向相反但<b>都不显著 → 未检出贡献</b></li>
+<li><b>专业背景</b>：覆盖 +0.85（p=0.0034）、决策要素 -0.10（p=0.6493）—— <b>方向相反且覆盖数显著 → 存疑</b>：覆盖数说它有用，决策要素说它没用。覆盖数用的是按学科列的关键词表，天然偏袒「专业」维度，<b>故以与专业无关的决策要素为准</b></li>
+<li><b>价值观</b>：覆盖 +0.70（p=0.0018）、决策要素 +0.40（p=0.1189）—— <b>两个指标方向都为正 → 这一维是真实贡献</b>（其中一个未达显著，属方向支持）</li>
+
+<p><b>参照</b>：E0（零异构，六个人完全一样）相对产品基线 = 覆盖 -1.05 维，这就是「把成员变得毫无差异」的代价。</p>
+
+<h2>四、阴性对照（第 0 步）</h2>
+
+<p>E5b 与 E1 是<b>逐字相同</b>的配置，理论上应完全无差异：</p>
+
+<div class='tw'><table><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>配对轮次</td><td>20</td></tr><tr><td>E1 均值</td><td>5.65</td></tr><tr><td>E5b 均值</td><td>5.65</td></tr><tr><td>配对差分</td><td>+0.000</td></tr><tr><td>差分标准差</td><td>0.725（0 = 逐轮完全一致）</td></tr><tr><td>配对 t p</td><td>1.0000</td></tr><tr><td>Wilcoxon p</td><td>1.0000</td></tr><tr><td>判定</td><td>✅ 通过</td></tr></tbody></table></div>
+
+<h2>五、题目效应（为什么必须分块）</h2>
+
+<div class='tw'><table><thead><tr><th>题目</th><th>T1</th><th>T2</th><th>T3</th><th>T4</th></tr></thead><tbody><tr><td>平均视角覆盖</td><td>5.86</td><td>5.69</td><td>4.49</td><td>4.63</td></tr></tbody></table></div>
+
+<li>题目间极差：<b>1.37</b> 个维度</li>
+<li>配置间极差：<b>1.15</b> 个维度</li>
+<li>→ 题目影响不可忽略，混池分析会被污染，故采用分块配对</li>
+
+<h2>六、成本</h2>
+
+<div class='tw'><table><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>已跑运行</td><td>140 次</td></tr><tr><td>token 合计</td><td>5,874,716</td></tr><tr><td>估算费用</td><td>约 ¥19.97</td></tr><tr><td>全量预估</td><td>140 次 约 ¥20.0</td></tr></tbody></table></div>
+
+<p><b>3 人 vs 6 人</b>：token 24,809 vs 45,243 → <b>省 45%</b>；视角覆盖 5 vs 5.65（-0.65）</p>
+
+<hr>
+<h2>必须一起写的边界</h2>
+
+<p>1. <b>n=20 只能检出 ≥1 维的差异。</b> 真实效应更小时，结论写「未检出」，<b>不能写「无效」</b>。</p>
+<p>2. <b>主指标「视角覆盖数」偏袒「专业」维度</b>（关键词表按学科列的词），故并列了与专业无关的「决策要素完备度」交叉验证。两者不同向时以保守结论为准。</p>
+<p>3. <b>只测覆盖面，没测决策质量。</b> 质量问题需人类盲评。</p>
+<p>4. <b>AI 评审不作为证据</b>（与生成同源，存在循环依赖）。</p>
+
+<p>*群智 · 人格消融 n=20 · 自动生成*</p>
+</body></html>
