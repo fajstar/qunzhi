@@ -1,0 +1,21 @@
+# 统一行尾，避免 Windows/Linux 拉下来整片 diff
+* text=auto eol=lf
+
+# 这些保持二进制，不做行尾转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary
+*.pt binary
+*.mp4 binary
+*.pptx binary
+*.docx binary
+*.xlsx binary
+
+# 中文文件名在某些工具里容易出问题，明确标记
+*.md text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+*.txt text eol=lf
