@@ -7,10 +7,13 @@
 
 ## 一、文件清单与校验和
 
+> 去重说明（2026-11-23）：`review_db_v3.json` 与 `master_table.csv` 与 `../raw_data/` 下的同名文件**逐字节一致**，
+> 为省 9 MB 体积，本目录不再重复存放；请按下表路径到 `../raw_data/` 取用，SHA256 不变。
+
 | 文件 | 体积 | SHA256 | 说明 |
 |---|---|---|---|
-| `review_db_v3.json` | 4.6 MB | `267a8c1edd7990a3bcddb8ce40ed8606d5537554b54c5d8eea7c0b54754cd1ee` | 563 份 v3 五角色双模型评审记录（含每维评分、置信度、原文证据） |
-| `master_table.csv` | 0.19 MB | `f33ba9d3a6cb69dbe335abec42da0be23cb7b57cf285604a7b9700d064b1e595` | 566 轮主实验的逐轮实验条件与结果汇总表（43 列） |
+| `../raw_data/review_db_v3.json` | 4.6 MB | `267a8c1edd7990a3bcddb8ce40ed8606d5537554b54c5d8eea7c0b54754cd1ee` | 563 份 v3 五角色双模型评审记录（含每维评分、置信度、原文证据） |
+| `../raw_data/master_table.csv` | 0.19 MB | `f33ba9d3a6cb69dbe335abec42da0be23cb7b57cf285604a7b9700d064b1e595` | 566 轮主实验的逐轮实验条件与结果汇总表（43 列） |
 
 MD5（便于快速比对）：`review_db_v3.json` = `219214218a671af59ccb1cf11c183ad3`；
 `master_table.csv` = `d0b382ac0747aa7c50a14612d00eced0`
