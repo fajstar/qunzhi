@@ -1,0 +1,58 @@
+{
+  "_comment": "开源流水线规则文件。改这里，不用改 opensource.py 的代码。",
+
+  "banned": [
+    "6 个模型",
+    "4 臂",
+    "三批实验",
+    "19 条边界",
+    "798 轮评审记录可用",
+    "27 倍",
+    "8.4 分",
+    "2.3% vs 55.7%",
+    "252/288",
+    "高并发",
+    "上千组实验",
+    "已有客户",
+    "已有用户",
+    "干预显著",
+    "18.5 倍",
+    "约 6 倍",
+    "12 个检索源",
+    "四道质量闸门"
+  ],
+
+  "allow": [
+    "18.5 倍",
+    "干预显著",
+    "已有客户",
+    "12 个检索源",
+    "四道质量闸门"
+  ],
+
+  "expect": {
+    "README.md": ["316 次实验", "成员必须异构"],
+    "RESULTS.md": ["Holm", "不成立"],
+    "LIMITATIONS.md": ["20 条"],
+    "docs/00_怎么读这个仓库.md": ["四批"],
+    "experiments/README.md": ["四批"]
+  },
+
+  "structure_allow_h1": [
+    "experiments/cases/",
+    "experiments/2026-09-16",
+    "origin/fraud-game/",
+    "journey/"
+  ],
+
+  "skip_dirs": [
+    "_site",
+    "__pycache__",
+    ".git",
+    "node_modules",
+    "runs",
+    "runs_v5",
+    "讨论原文",
+    "site-packages"
+  ]
+}
